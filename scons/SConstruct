@@ -1,0 +1,11 @@
+TARGET = 'TouchMovieApp'
+
+SOURCES = ['TouchMovieApp.cpp', 'Area.cpp', 'AreaController.cpp',
+		'Movie.cpp']
+RESOURCES = ['data.xml']
+
+DEBUG = 0
+
+SConscript('../../../scons/SConscript',
+	exports = ['TARGET', 'SOURCES', 'RESOURCES', 'DEBUG'])
+

@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- ====================================================================================== -->
+<!--  Touch Movie Data -->
+<!-- ====================================================================================== -->
+<TouchMovie>
+  <Movie
+    Name = "noisettes"
+    Path = "http://movies.apple.com/media/us/quicktime/guide/hd/480p/noisettes_m480p.mov"
+    Main = "1">
+    <!-- Path = "d:\Program Files\cinder\projects\TouchMovie\data\noisettes.mov" -->
+  </Movie>
+
+  <Movie
+    Name = "airplane"
+    Path = "http://pdl.warnerbros.com/wbol/us/dd/med/northbynorthwest/quicktime_page/nbnf_airplane_explosion_qt_500.mov">
+    <!-- Path = "d:\Program Files\cinder\projects\TouchMovie\data\airplane.mov" -->
+    <Rect
+        x1 = "50"
+        y1 = "50"
+        x2 = "200"
+        y2 = "200"/>
+  </Movie>
+  <Movie
+    Name = "bbcearth"
+    Path = "http://movies.apple.com/movies/us/hd_gallery/gl1800/480p/bbc_earth_m480p.mov">
+    <!-- Path = "d:\\Program Files\\cinder\\projects\\TouchMovie\\data\\bbcearth.mov"> -->
+    <Rect
+        x1 = "300"
+        y1 = "300"
+        x2 = "450"
+        y2 = "450"/>
+  </Movie>
+
+</TouchMovie>
