@@ -59,8 +59,6 @@ void TouchMovieApp::setup()
 
 		Rectf rect = Rectf( (float)x1, (float)y1, (float)x2, (float)y2 );
 
-//		std::replace( strPath.begin(), strPath.end(), '\\', '/' );
-
 		mAreaController.addArea( strName, rect );
 		if( ! mAreaController.setMovie( strName, strPath ))
 			continue;
@@ -68,22 +66,6 @@ void TouchMovieApp::setup()
 		if( main )
 			mAreaController.setMain( strName );
 	}
-
-// 	mAreaController.addArea( "noisettes", Rectf(   0,   0, 855, 480 ));
-// 	mAreaController.addArea( "airplane" , Rectf(  50,  50, 150, 150 ));
-// 	mAreaController.addArea( "bbcearth" , Rectf( 100, 100, 200, 200 ));
-// 
-// 	mAreaController.setMovie( "noisettes", "d:\\Program Files\\cinder\\projects\\TouchMovie\\data\\noisettes.mov" );
-// 	mAreaController.setMovie( "airplane" , "d:\\Program Files\\cinder\\projects\\TouchMovie\\data\\airplane.mov"  );
-// 	mAreaController.setMovie( "bbcearth" , "d:\\Program Files\\cinder\\projects\\TouchMovie\\data\\bbcearth.mov"  );
-// 
-// 	mAreaController.setMain( "noisettes" );
-// 
-// 	mAreaController.setAlpha( "airplane" , 0.0f );
-// 	mAreaController.setAlpha( "bbcearth" , 0.0f );
-// 
-// 	mAreaController.setRect( "airplane" , Rectf(  50,  50, 150, 150 ));
-// 	mAreaController.setRect( "bbcearth" , Rectf( 100, 100, 200, 200 ));
 }
 
 void TouchMovieApp::keyDown( KeyEvent event )
@@ -123,18 +105,3 @@ void TouchMovieApp::draw()
 }
 
 CINDER_APP_BASIC( TouchMovieApp, RendererGl(0) );
-
-// flip the texture so it draws as expected
-// Area bounds = myTexture.getBounds();
-// 	int32_t i = bounds.y2;
-// 	bounds.y2 = bounds.y1;
-// 	bounds.y1 = i;
-// 	swap<int32_t>( bounds.y1, bounds.y2 );
-// draw the texture
-// gl::draw( myTexture, bounds );
-// 
-// restore the blend mode, so other commands work as expected
-// gl::disableAlphaBlending();
-
-
-
