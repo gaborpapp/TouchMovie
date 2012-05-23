@@ -21,7 +21,7 @@ public:
 	void addArea( std::string name, Rectf &rect );
 	void removeArea( std::string name );
 	void setMain( std::string name );
-	bool setMovie( std::string name, std::string strPath );
+	bool setMovie( std::string name, fs::path pathMovie );
 	void setRect( std::string name, Rectf &rect );
 	void setAlpha( std::string name, float alpha );
 
