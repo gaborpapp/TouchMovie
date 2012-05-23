@@ -2,7 +2,6 @@
 #include "cinder/Xml.h"
 #include "AreaController.h"
 #include "Area.h"
-#include "Resources.h"
 
 using namespace ci;
 using namespace std;
@@ -32,39 +31,49 @@ void TouchMovieApp::prepareSettings( Settings *settings )
 
 void TouchMovieApp::setup()
 {
-	// load data.xml
-	XmlTree doc( loadResource( RES_XML ));
-
-	XmlTree xmlTouchMovie = doc.getChild( "TouchMovie" );
-
-	for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
+	fs::path xmlPath( "./data.xml" );
+	if( ! fs::exists( xmlPath ))
 	{
-		std::string strName = child->getAttributeValue<std::string>( "Name" );
-		std::string strPath = child->getAttributeValue<std::string>( "Path" );
-		int         main    = child->getAttributeValue<int>( "Main", 0 );
-		int         x1 = 0;
-		int         y1 = 0;
-		int         x2 = 0;
-		int         y2 = 0;
+		xmlPath = getOpenFilePath( "./" );
 
-		if( child->hasChild( "Rect" ))
+		if( ! fs::exists( xmlPath ))
+			return;
+	}
+
+	XmlTree doc( loadFile( xmlPath ));
+	if( doc.hasChild( "TouchMovie" ))
+	{
+		XmlTree xmlTouchMovie = doc.getChild( "TouchMovie" );
+	
+		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			XmlTree xmlRect = child->getChild( "Rect" );
-
-			x1 = xmlRect.getAttributeValue<int>( "x1", 0 );
-			y1 = xmlRect.getAttributeValue<int>( "y1", 0 );
-			x2 = xmlRect.getAttributeValue<int>( "x2", 0 );
-			y2 = xmlRect.getAttributeValue<int>( "y2", 0 );
+			std::string strName = child->getAttributeValue<std::string>( "Name" );
+			std::string strPath = child->getAttributeValue<std::string>( "Path" );
+			int         main    = child->getAttributeValue<int>( "Main", 0 );
+			int         x1 = 0;
+			int         y1 = 0;
+			int         x2 = 0;
+			int         y2 = 0;
+	
+			if( child->hasChild( "Rect" ))
+			{
+				XmlTree xmlRect = child->getChild( "Rect" );
+	
+				x1 = xmlRect.getAttributeValue<int>( "x1", 0 );
+				y1 = xmlRect.getAttributeValue<int>( "y1", 0 );
+				x2 = xmlRect.getAttributeValue<int>( "x2", 0 );
+				y2 = xmlRect.getAttributeValue<int>( "y2", 0 );
+			}
+	
+			Rectf rect = Rectf( (float)x1, (float)y1, (float)x2, (float)y2 );
+	
+			mAreaController.addArea( strName, rect );
+			if( ! mAreaController.setMovie( strName, strPath ))
+				continue;
+	
+			if( main )
+				mAreaController.setMain( strName );
 		}
-
-		Rectf rect = Rectf( (float)x1, (float)y1, (float)x2, (float)y2 );
-
-		mAreaController.addArea( strName, rect );
-		if( ! mAreaController.setMovie( strName, strPath ))
-			continue;
-
-		if( main )
-			mAreaController.setMain( strName );
 	}
 }
 
