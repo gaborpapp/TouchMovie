@@ -31,10 +31,10 @@ void TouchMovieApp::prepareSettings( Settings *settings )
 
 void TouchMovieApp::setup()
 {
-	fs::path xmlPath( "./data.xml" );
+	fs::path xmlPath( getAssetPath( "data.xml" ) );
 	if( ! fs::exists( xmlPath ))
 	{
-		xmlPath = getOpenFilePath( "./" );
+		xmlPath = getOpenFilePath( getAppPath() );
 
 		if( ! fs::exists( xmlPath ))
 			return;
@@ -44,7 +44,7 @@ void TouchMovieApp::setup()
 	if( doc.hasChild( "TouchMovie" ))
 	{
 		XmlTree xmlTouchMovie = doc.getChild( "TouchMovie" );
-	
+
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
 			std::string strName = child->getAttributeValue<std::string>( "Name" );
@@ -54,23 +54,23 @@ void TouchMovieApp::setup()
 			int         y1 = 0;
 			int         x2 = 0;
 			int         y2 = 0;
-	
+
 			if( child->hasChild( "Rect" ))
 			{
 				XmlTree xmlRect = child->getChild( "Rect" );
-	
+
 				x1 = xmlRect.getAttributeValue<int>( "x1", 0 );
 				y1 = xmlRect.getAttributeValue<int>( "y1", 0 );
 				x2 = xmlRect.getAttributeValue<int>( "x2", 0 );
 				y2 = xmlRect.getAttributeValue<int>( "y2", 0 );
 			}
-	
+
 			Rectf rect = Rectf( (float)x1, (float)y1, (float)x2, (float)y2 );
-	
+
 			mAreaController.addArea( strName, rect );
 			if( ! mAreaController.setMovie( strName, strPath ))
 				continue;
-	
+
 			if( main )
 				mAreaController.setMain( strName );
 		}
