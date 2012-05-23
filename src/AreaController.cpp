@@ -81,7 +81,7 @@ void AreaController::setMain( std::string name )
 		mpAreaMain->setAlpha( 1.0f );
 }
 
-bool AreaController::setMovie( std::string name, std::string path )
+bool AreaController::setMovie( std::string name, fs::path pathMovie )
 {
 	Area *pArea = _getArea( name );
 
@@ -90,22 +90,22 @@ bool AreaController::setMovie( std::string name, std::string path )
 		try
 		{
 			// load up the movie, set it to loop, and begin playing
-			if( path.find( "http://") != std::string::npos )
+			if( pathMovie.string().find( "http://") != std::string::npos )
 			{
-				qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( path ));
+				qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( pathMovie.string()));
 				movieLoader.waitForPlaythroughOk();
 				qtime::MovieGl movie = qtime::MovieGl( movieLoader );
 				pArea->setMovie( movie );
 			}
 			else
 			{
-				qtime::MovieGl movie = qtime::MovieGl( path );
+				qtime::MovieGl movie = qtime::MovieGl( pathMovie );
 				pArea->setMovie( movie );
 			}
 		}
 		catch( ... )
 		{
-			console() << "Unable to load the movie: " << name << " - (" << path << ")" << std::endl;
+			console() << "Unable to load the movie: " << name << " - (" << pathMovie << ")" << std::endl;
 			return false;
 		}
 
