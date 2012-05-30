@@ -3,15 +3,13 @@
 #include "cinder/qtime/QuickTime.h"
 #include "Area.h"
 
-using namespace ci;
-
 namespace TouchMovie
 {
 
 class Movie
 {
 public:
-	Movie( qtime::MovieGl &movie, Rectf &rect );
+	Movie( ci::qtime::MovieGl &movie, ci::Rectf &rect );
 
 	void update();
 	void draw();
@@ -22,18 +20,18 @@ public:
 
 	void              setAlpha( const float alpha );
 	float             getAlpha() const;
-	void              setRect( const Rectf &alpha );
-	const Rectf       getRect() const;
+	void              setRect( const ci::Rectf &alpha );
+	const ci::Rectf   getRect() const;
 
 	const int         getWidth() const;
 	const int         getHeight() const;
 
 private:
-	qtime::MovieGl   mMovie;
-	Rectf            mRect;
+	ci::qtime::MovieGl mMovie;
+	ci::Rectf          mRect;
 
-	gl::Texture      mFrame;
-	float            mAlpha;
+	ci::gl::Texture    mFrame;
+	float              mAlpha;
 };
 
 } // namespace TouchMovie
