@@ -4,16 +4,20 @@
 <!-- ====================================================================================== -->
 <TouchMovie>
   <Movie
-    Name = "noisettes"
-    Path = "http://movies.apple.com/media/us/quicktime/guide/hd/480p/noisettes_m480p.mov"
-    Main = "1">
-    <!-- Path = "d:\Program Files\cinder\projects\TouchMovie\data\noisettes.mov" -->
+    Name      = "bg_01"
+    Path      = "bg_01.mov"
+    Main      = "1"
+    DrawFrame = "1">
+<!--    Path = "http://movies.apple.com/media/us/quicktime/guide/hd/480p/noisettes_m480p.mov"-->
   </Movie>
 
   <Movie
-    Name = "airplane"
-    Path = "http://pdl.warnerbros.com/wbol/us/dd/med/northbynorthwest/quicktime_page/nbnf_airplane_explosion_qt_500.mov">
-    <!-- Path = "d:\Program Files\cinder\projects\TouchMovie\data\airplane.mov" -->
+    Name      = "airplane"
+    Path      = "http://pdl.warnerbros.com/wbol/us/dd/med/northbynorthwest/quicktime_page/nbnf_airplane_explosion_qt_500.mov"
+    FadeIn    = "1"
+    FadeOut   = "1"
+    DrawFrame = "1">
+    <!-- Path = "airplane.mov"> -->
     <Rect
         x1 = "50"
         y1 = "50"
@@ -21,14 +25,30 @@
         y2 = "200"/>
   </Movie>
   <Movie
-    Name = "bbcearth"
-    Path = "http://movies.apple.com/movies/us/hd_gallery/gl1800/480p/bbc_earth_m480p.mov">
-    <!-- Path = "d:\\Program Files\\cinder\\projects\\TouchMovie\\data\\bbcearth.mov"> -->
+    Name      = "bbcearth"
+    Path      = "http://movies.apple.com/movies/us/hd_gallery/gl1800/480p/bbc_earth_m480p.mov"
+    FadeIn    = "2"
+    FadeOut   = "2"
+    DrawFrame = "0">
+    <!-- Path = "bbcearth.mov"> -->
     <Rect
-        x1 = "300"
+        x1 = "100"
         y1 = "300"
-        x2 = "450"
-        y2 = "450"/>
+        x2 = "300"
+        y2 = "500"/>
+  </Movie>
+
+  <Movie
+    Name      = "rollover_01"
+    Path      = "rollover_01.mov"
+    FadeIn    = "0.5"
+    FadeOut   = "0.5"
+    DrawFrame = "1">
+    <Rect
+        x1 = "200"
+        y1 = "100"
+        x2 = "600"
+        y2 = "500"/>
   </Movie>
 
 </TouchMovie>
