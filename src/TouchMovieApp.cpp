@@ -4,6 +4,7 @@
 #include "Area.h"
 
 using namespace ci;
+using namespace ci::app;
 using namespace std;
 using namespace TouchMovie;
 
@@ -25,8 +26,8 @@ public:
 void TouchMovieApp::prepareSettings( Settings *settings )
 {
 	settings->setWindowSize( 800, 600 );
-	settings->setFrameRate( 60.0f );
-	settings->setFullScreen();
+	settings->setFrameRate( FRAME_RATE );
+	//settings->setFullScreen();
 }
 
 void TouchMovieApp::setup()
@@ -47,9 +48,12 @@ void TouchMovieApp::setup()
 
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			std::string strName = child->getAttributeValue<std::string>( "Name" );
-			std::string strPath = child->getAttributeValue<std::string>( "Path" );
-			int         main    = child->getAttributeValue<int>( "Main", 0 );
+			std::string strName   = child->getAttributeValue<std::string>( "Name" );
+			std::string strPath   = child->getAttributeValue<std::string>( "Path" );
+			bool        main      = child->getAttributeValue<bool>( "Main", 0 );
+			bool        drawFrame = child->getAttributeValue<bool>( "DrawFrame", 0 );
+			float       fadeIn    = child->getAttributeValue<float>( "FadeIn", 1.0 );
+			float       fadeOut   = child->getAttributeValue<float>( "FadeOut", 1.0 );
 			int         x1 = 0;
 			int         y1 = 0;
 			int         x2 = 0;
@@ -73,6 +77,10 @@ void TouchMovieApp::setup()
 
 			if( main )
 				mAreaController.setMain( strName );
+
+			mAreaController.setDrawFrame( strName, drawFrame );
+			mAreaController.setFadeIn( strName, fadeIn );
+			mAreaController.setFadeOut( strName, fadeOut );
 		}
 	}
 }
@@ -80,6 +88,10 @@ void TouchMovieApp::setup()
 void TouchMovieApp::keyDown( KeyEvent event )
 {
 	if( event.getCode() == KeyEvent::KEY_ESCAPE )
+	{
+		exit( 0 );
+	}
+	else if( event.getCode() == 'f' )
 	{
 		setFullScreen( ! isFullScreen());
 	}
