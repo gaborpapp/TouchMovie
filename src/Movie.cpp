@@ -1,6 +1,8 @@
 #include "Movie.h"
 #include "cinder/CinderMath.h"
 
+using namespace ci;
+
 namespace TouchMovie
 {
 
@@ -17,8 +19,9 @@ Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 
 void Movie::update()
 {
-	if( mMovie )
+	if( mMovie && isPlaying())
 	{
+		mMovie.setVolume( mAlpha );
 		mFrame = mMovie.getTexture();
 	}
 }
@@ -49,13 +52,13 @@ bool Movie::isPlaying()
 
 void Movie::play()
 {
-//	mMovie.seekToStart();
-//	mMovie.play();
+	mMovie.seekToStart();
+	mMovie.play();
 }
 
 void Movie::stop()
 {
-//	mMovie.stop();
+	mMovie.stop();
 }
 
 void Movie::setAlpha( const float alpha )
