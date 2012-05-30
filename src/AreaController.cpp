@@ -1,6 +1,9 @@
 #include "cinder/app/App.h"
 #include "AreaController.h"
 
+using namespace ci;
+using namespace ci::app;
+
 namespace TouchMovie
 {
 
@@ -99,7 +102,9 @@ bool AreaController::setMovie( std::string name, fs::path pathMovie )
 			}
 			else
 			{
-				qtime::MovieGl movie = qtime::MovieGl( pathMovie );
+				fs::path xmlPath( getAssetPath( pathMovie ));
+
+				qtime::MovieGl movie = qtime::MovieGl( xmlPath );
 				pArea->setMovie( movie );
 			}
 		}
@@ -147,6 +152,60 @@ const int AreaController::getHeigth( std::string name )
 
 	if( pArea )
 		return pArea->getHeight();
+
+	return 0;
+}
+
+void AreaController::setDrawFrame( std::string name, bool drawFrame )
+{
+	Area *pArea = _getArea( name );
+
+	if( pArea )
+		pArea->setDrawFrame( drawFrame );
+}
+
+bool AreaController::getDrawFrame( std::string name )
+{
+	Area *pArea = _getArea( name );
+
+	if( pArea )
+		return pArea->getDrawFrame();
+
+	return false;
+}
+
+void AreaController::setFadeIn( std::string name, float fadeIn )
+{
+	Area *pArea = _getArea( name );
+
+	if( pArea )
+		pArea->setFadeIn( fadeIn );
+}
+
+float AreaController::getFadeIn( std::string name )
+{
+	Area *pArea = _getArea( name );
+
+	if( pArea )
+		return pArea->getFadeIn();
+
+	return 0;
+}
+
+void AreaController::setFadeOut( std::string name, float fadeOut )
+{
+	Area *pArea = _getArea( name );
+
+	if( pArea )
+		pArea->setFadeOut( fadeOut );
+}
+
+float AreaController::getFadeOut( std::string name )
+{
+	Area *pArea = _getArea( name );
+
+	if( pArea )
+		return pArea->getFadeOut();
 
 	return 0;
 }
