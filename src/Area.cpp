@@ -1,10 +1,10 @@
 #include "Area.h"
 #include "cinder/CinderMath.h"
 
+using namespace ci;
+
 namespace TouchMovie
 {
-
-static const float ALPHA_CHANGE = 0.01f;
 
 Area::Area( std::string name, Rectf &rect )
 : mName( name )
@@ -32,19 +32,22 @@ void Area::draw()
 	if( mpMovie )
 		mpMovie->draw();
 
-	gl::drawString( mName, mRect.getUpperLeft());
-	gl::drawLine( mRect.getUpperLeft() , mRect.getUpperRight());
-	gl::drawLine( mRect.getUpperRight(), mRect.getLowerRight());
-	gl::drawLine( mRect.getLowerRight(), mRect.getLowerLeft() );
-	gl::drawLine( mRect.getLowerLeft() , mRect.getUpperLeft() );
+	if( mDrawFrame )
+	{
+		gl::drawString( mName, mRect.getUpperLeft());
+		gl::drawLine( mRect.getUpperLeft() , mRect.getUpperRight());
+		gl::drawLine( mRect.getUpperRight(), mRect.getLowerRight());
+		gl::drawLine( mRect.getLowerRight(), mRect.getLowerLeft() );
+		gl::drawLine( mRect.getLowerLeft() , mRect.getUpperLeft() );
+	}
 }
 
 void Area::show( bool show )
 {
 	if( show )
-		mAlphaChange = ALPHA_CHANGE;
+		mAlphaChange = mFadeIn;
 	else
-		mAlphaChange = -ALPHA_CHANGE;
+		mAlphaChange = -mFadeOut;
 }
 
 void Area::setMovie( qtime::MovieGl &movie )
@@ -113,6 +116,36 @@ const int Area::getHeight() const
 		return mpMovie->getHeight();
 
 	return 0;
+}
+
+void Area::setDrawFrame( const bool drawFrame )
+{
+	mDrawFrame = drawFrame;
+}
+
+const bool Area::getDrawFrame() const
+{
+	return mDrawFrame;
+}
+
+void Area::setFadeIn( const float fadeIn )
+{
+	mFadeIn = (1.0f/FRAME_RATE)/fadeIn;
+}
+
+const float Area::getFadeIn() const
+{
+	return (1.0f/FRAME_RATE)/mFadeIn;
+}
+
+void Area::setFadeOut( const float fadeOut )
+{
+	mFadeOut = (1.0f/FRAME_RATE)/fadeOut;
+}
+
+const float Area::getFadeOut() const
+{
+	return (1.0f/FRAME_RATE)/mFadeOut;
 }
 
 void Area::_changeAlpha()
