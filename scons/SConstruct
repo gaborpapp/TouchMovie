@@ -2,7 +2,7 @@ TARGET = 'TouchMovieApp'
 
 SOURCES = ['TouchMovieApp.cpp', 'Area.cpp', 'AreaController.cpp',
 		'Movie.cpp']
-ASSETS = ['data.xml']
+ASSETS = ['data.xml', 'bg_01.mov', 'rollover_01.mov']
 
 DEBUG = 0
 

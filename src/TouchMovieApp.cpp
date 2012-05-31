@@ -31,14 +31,13 @@ private:
 
 void TouchMovieApp::prepareSettings( Settings *settings )
 {
-	LoadXml( "data.xml" );
-
-	settings->setWindowSize( mWidth, mHeight );
 	settings->setFrameRate( FRAME_RATE );
 }
 
 void TouchMovieApp::setup()
 {
+	LoadXml( "data.xml" );
+	setWindowSize( mWidth, mHeight );
 }
 
 void TouchMovieApp::LoadXml( std::string xmlName )
