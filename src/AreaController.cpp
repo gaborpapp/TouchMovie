@@ -71,17 +71,24 @@ void AreaController::removeArea( std::string name )
 	}
 }
 
-void AreaController::setMain( std::string name )
+void AreaController::setMain( std::string name, bool main )
 {
-	mpAreaMain = _getArea( name );
+	if( main )
+	{
+		mpAreaMain = _getArea( name );
+		if( mpAreaMain )
+			mpAreaMain->setAlpha( 1.0f );
+	}
+	else if( mpAreaMain && mpAreaMain->getName() == name )
+	{
+		mpAreaMain = 0;
+	}
 
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		(*p)->setAlpha( 0.0f );
+		if( (*p) != mpAreaMain )
+			(*p)->setAlpha( 0.0f );
 	}
-
-	if( mpAreaMain )
-		mpAreaMain->setAlpha( 1.0f );
 }
 
 bool AreaController::setMovie( std::string name, fs::path pathMovie )
@@ -215,11 +222,30 @@ Area *AreaController::getAreaMain()
 	return mpAreaMain;
 }
 
+void AreaController::resize()
+{
+	Rectf rectMainOrig = mpAreaMain->getRectOrig();
+	Rectf rectMainNew  = mpAreaMain->getRect();
+
+	RectMapping rectMapping( rectMainOrig, rectMainNew, false );
+
+	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
+	{
+		if((*p) != mpAreaMain )
+		{
+			Rectf rectOrig = (*p)->getRectOrig();
+			Rectf rectNew  = Rectf( rectMapping.map( rectOrig.getUpperLeft()), rectMapping.map( rectOrig.getLowerRight()));
+
+			(*p)->setRect( rectNew );
+		}
+	}
+}
+
 Area *AreaController::_getArea( std::string name )
 {
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		if( (*p)->getName() == name )
+		if((*p)->getName() == name )
 		{
 			return *p;
 		}

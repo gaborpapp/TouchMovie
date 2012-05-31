@@ -17,7 +17,7 @@ public:
 
 	void addArea( std::string name, ci::Rectf &rect );
 	void removeArea( std::string name );
-	void setMain( std::string name );
+	void setMain( std::string name, bool main );
 	bool setMovie( std::string name, ci::fs::path pathMovie );
 	void setRect( std::string name, ci::Rectf &rect );
 	void setAlpha( std::string name, float alpha );
@@ -35,6 +35,8 @@ public:
 	float getFadeOut( std::string name );
 
 	Area *getAreaMain();
+
+	void resize();
 
 private:
 	Area *_getArea( std::string name );

@@ -12,9 +12,9 @@ Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 , mFrame()
 , mAlpha( 0.0f )
 {
-	mMovie.play();
 	mMovie.seekToStart();
 	mMovie.setLoop();
+	mMovie.stop();
 }
 
 void Movie::update()

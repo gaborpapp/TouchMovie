@@ -23,6 +23,7 @@ public:
 	const float       getAlpha() const;
 	void              setRect( const ci::Rectf &alpha );
 	const ci::Rectf   getRect() const;
+	const ci::Rectf   getRectOrig() const;
 
 	const int         getWidth() const;
 	const int         getHeight() const;
@@ -41,6 +42,7 @@ private:
 private:
 	std::string      mName;
 	ci::Rectf        mRect;
+	ci::Rectf        mRectOrig;
 	Movie           *mpMovie;
 
 	bool             mDrawFrame;

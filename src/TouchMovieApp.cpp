@@ -19,20 +19,33 @@ public:
 	void update();
 	void draw();
 
+private:
+	void LoadXml( std::string xmlName );
+
+private:
 	AreaController mAreaController;
+	int            mWidth;
+	int            mHeight;
 };
 
 
 void TouchMovieApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 800, 600 );
+	LoadXml( "data.xml" );
+
+	settings->setWindowSize( mWidth, mHeight );
 	settings->setFrameRate( FRAME_RATE );
-	//settings->setFullScreen();
 }
 
 void TouchMovieApp::setup()
 {
-	fs::path xmlPath( getAssetPath( "data.xml" ) );
+}
+
+void TouchMovieApp::LoadXml( std::string xmlName )
+{
+	bool drawFrame = false;
+
+	fs::path xmlPath( getAssetPath( xmlName ) );
 	if( ! fs::exists( xmlPath ))
 	{
 		xmlPath = getOpenFilePath( getAppPath() );
@@ -42,18 +55,26 @@ void TouchMovieApp::setup()
 	}
 
 	XmlTree doc( loadFile( xmlPath ));
+
+	if( doc.hasChild( "Settings" ))
+	{
+		XmlTree xmlSettings = doc.getChild( "Settings" );
+		
+		mWidth    = xmlSettings.getAttributeValue<int> ( "Width"    , 800 );
+		mHeight   = xmlSettings.getAttributeValue<int> ( "Height"   , 600 );
+		drawFrame = xmlSettings.getAttributeValue<bool>( "DrawFrame", 0   );
+	}
 	if( doc.hasChild( "TouchMovie" ))
 	{
 		XmlTree xmlTouchMovie = doc.getChild( "TouchMovie" );
 
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			std::string strName   = child->getAttributeValue<std::string>( "Name" );
-			std::string strPath   = child->getAttributeValue<std::string>( "Path" );
-			bool        main      = child->getAttributeValue<bool>( "Main", 0 );
-			bool        drawFrame = child->getAttributeValue<bool>( "DrawFrame", 0 );
-			float       fadeIn    = child->getAttributeValue<float>( "FadeIn", 1.0 );
-			float       fadeOut   = child->getAttributeValue<float>( "FadeOut", 1.0 );
+			std::string strName   = child->getAttributeValue<std::string>( "Name"         );
+			std::string strPath   = child->getAttributeValue<std::string>( "Path"         );
+			bool        main      = child->getAttributeValue<bool>       ( "Main"   , 0   );
+			float       fadeIn    = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
+			float       fadeOut   = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
 			int         x1 = 0;
 			int         y1 = 0;
 			int         x2 = 0;
@@ -69,18 +90,14 @@ void TouchMovieApp::setup()
 				y2 = xmlRect.getAttributeValue<int>( "y2", 0 );
 			}
 
-			Rectf rect = Rectf( (float)x1, (float)y1, (float)x2, (float)y2 );
+			Rectf rect = Rectf((float)x1, (float)y1, (float)x2, (float)y2 );
 
-			mAreaController.addArea( strName, rect );
-			if( ! mAreaController.setMovie( strName, strPath ))
-				continue;
-
-			if( main )
-				mAreaController.setMain( strName );
-
+			mAreaController.addArea     ( strName, rect      );
+			mAreaController.setMovie    ( strName, strPath   );
+			mAreaController.setMain     ( strName, main      );
 			mAreaController.setDrawFrame( strName, drawFrame );
-			mAreaController.setFadeIn( strName, fadeIn );
-			mAreaController.setFadeOut( strName, fadeOut );
+			mAreaController.setFadeIn   ( strName, fadeIn    );
+			mAreaController.setFadeOut  ( strName, fadeOut   );
 		}
 	}
 }
@@ -108,6 +125,8 @@ void TouchMovieApp::resize( ResizeEvent event )
 
 	if( pAreaMain )
 		pAreaMain->setRect( Rectf( 0, 0, (float)pAreaMain->getWidth(), (float)pAreaMain->getHeight()).getCenteredFit( getWindowBounds(), true ));
+
+	mAreaController.resize();
 }
 
 void TouchMovieApp::update()

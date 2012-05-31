@@ -9,6 +9,7 @@ namespace TouchMovie
 Area::Area( std::string name, Rectf &rect )
 : mName( name )
 , mRect( rect )
+, mRectOrig( rect )
 , mpMovie( 0 )
 , mAlphaChange( 0 )
 {
@@ -100,6 +101,11 @@ void Area::setRect( const Rectf &rect )
 const Rectf Area::getRect() const
 {
 	return mRect;
+}
+
+const Rectf Area::getRectOrig() const
+{
+	return mRectOrig;
 }
 
 const int Area::getWidth() const
