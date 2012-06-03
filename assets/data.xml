@@ -5,7 +5,7 @@
 <Settings
   Width     = "800"
   Height    = "600"
-  DrawFrame = "0">
+  DrawFrame = "1">
 </Settings>
 <TouchMovie>
   <Movie
@@ -24,10 +24,43 @@
     FadeIn    = "0.5"
     FadeOut   = "0.5">
     <Rect
-        x1 = "510"
-        y1 = "90"
-        x2 = "1410"
-        y2 = "990"/>
+        x1 = "100"
+        y1 = "100"
+        x2 = "500"
+        y2 = "500"/>
+  </Movie>
+  <Movie
+    Name      = "rollover_02"
+    Path      = "rollover_01.mov"
+    FadeIn    = "1"
+    FadeOut   = "1">
+    <Rect
+        x1 = "600"
+        y1 = "100"
+        x2 = "1000"
+        y2 = "500"/>
+  </Movie>
+  <Movie
+    Name      = "rollover_03"
+    Path      = "rollover_01.mov"
+    FadeIn    = "1.5"
+    FadeOut   = "1.5">
+    <Rect
+        x1 = "100"
+        y1 = "600"
+        x2 = "500"
+        y2 = "1000"/>
+  </Movie>
+  <Movie
+    Name      = "rollover_04"
+    Path      = "rollover_01.mov"
+    FadeIn    = "2"
+    FadeOut   = "2">
+    <Rect
+        x1 = "600"
+        y1 = "600"
+        x2 = "1000"
+        y2 = "1000"/>
   </Movie>
 
 </TouchMovie>

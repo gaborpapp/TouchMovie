@@ -46,11 +46,11 @@ private:
 	Movie           *mpMovie;
 
 	bool             mDrawFrame;
+	bool             mShow;
+	double           mLastTime;
 
 	float            mFadeIn;
 	float            mFadeOut;
-
-	float            mAlphaChange;
 };
 
 } // namespace TouchMovie

@@ -9,7 +9,7 @@ namespace TouchMovie
 
 AreaController::AreaController()
 : mpAreaMain( 0 )
-, mpAreaAct( 0 )
+, mpAreaMouse( 0 )
 {
 }
 
@@ -31,18 +31,7 @@ void AreaController::draw()
 
 void AreaController::mouseMove( MouseEvent event )
 {
-	Area *pArea = _getArea( event.getPos());
-
-	if( mpAreaAct == pArea )
-		return;
-
-	if( mpAreaAct )
-		mpAreaAct->show( false );
-
-	mpAreaAct = pArea;
-
-	if( mpAreaAct )
-		mpAreaAct->show( true );
+	mpAreaMouse = _getArea( event.getPos());
 }
 
 void AreaController::mouseDown( MouseEvent event )
@@ -241,6 +230,39 @@ void AreaController::resize()
 	}
 }
 
+void AreaController::setTouchPosBeg()
+{
+}
+
+void AreaController::setTouchPos( ci::Vec2f pos )
+{
+	Area *pArea = _getArea( pos );
+
+	if( pArea )
+		mAreasAct.push_back( pArea );
+}
+
+void AreaController::setTouchPosEnd()
+{
+	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
+	{
+		if( _isAreaAct((*p )))
+		{
+			if( (*p) != mpAreaMain )
+			{
+				int df = 0;
+			}
+			(*p)->show( true );
+		}
+		else
+		{
+			(*p)->show( false );
+		}
+	}
+
+	mAreasAct.clear();
+}
+
 Area *AreaController::_getArea( std::string name )
 {
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
@@ -255,7 +277,7 @@ Area *AreaController::_getArea( std::string name )
 }
 
 Area *AreaController::_getArea( const Vec2i &pos )
-{	
+{
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
 		if( (*p) != mpAreaMain
@@ -266,6 +288,23 @@ Area *AreaController::_getArea( const Vec2i &pos )
 	}
 
 	return 0;
+}
+
+bool AreaController::_isAreaAct( Area *pArea )
+{
+	if( pArea == mpAreaMain
+	 || pArea == mpAreaMouse )
+		return true;
+
+	for( std::vector<Area*>::iterator p = mAreasAct.begin(); p != mAreasAct.end(); ++p )
+	{
+		if((*p) == pArea )
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 } // namespace TouchMovie

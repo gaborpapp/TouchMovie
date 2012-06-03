@@ -1,11 +1,30 @@
 TARGET = 'TouchMovieApp'
 
 SOURCES = ['TouchMovieApp.cpp', 'Area.cpp', 'AreaController.cpp',
-		'Movie.cpp']
+		'Movie.cpp', 'PParams.cpp']
 ASSETS = ['data.xml', 'bg_01.mov', 'rollover_01.mov']
 
 DEBUG = 0
 
+CINDERNIPATH = '../../../blocks/Cinder-NI/scons/'
+
+import sys
+sys.path.append(CINDERNIPATH)
+import CinderNI
+SOURCES += CinderNI.getSources(CINDERNIPATH)
+INCLUDES = CinderNI.getIncludes(CINDERNIPATH)
+LIBS = CinderNI.getLibs(CINDERNIPATH)
+LIBPATH = CinderNI.getLibPath(CINDERNIPATH)
+
+CINDER_OPENCV_PATH = '../../../blocks/Cinder-OpenCV/scons/'
+
+sys.path.append(CINDER_OPENCV_PATH)
+import CinderOpenCV
+SOURCES += CinderOpenCV.getSources(CINDER_OPENCV_PATH)
+INCLUDES += CinderOpenCV.getIncludes(CINDER_OPENCV_PATH)
+CVLIBS = CinderOpenCV.getLibs(CINDER_OPENCV_PATH)
+LIBS += [File(s) for s in CVLIBS]
+
 SConscript('../../../scons/SConscript',
-	exports = ['TARGET', 'SOURCES', 'ASSETS', 'DEBUG'])
+	exports = ['TARGET', 'SOURCES', 'DEBUG', 'INCLUDES', 'LIBS', 'LIBPATH'])
 

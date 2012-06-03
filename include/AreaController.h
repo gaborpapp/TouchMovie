@@ -38,15 +38,21 @@ public:
 
 	void resize();
 
+	void setTouchPosBeg();
+	void setTouchPos   ( ci::Vec2f jointPos );
+	void setTouchPosEnd();
+
 private:
-	Area *_getArea( std::string name );
-	Area *_getArea( const ci::Vec2i &pos );
+	Area  *_getArea( std::string name );
+	Area  *_getArea( const ci::Vec2i &pos );
+	bool   _isAreaAct ( Area *pArea );
 
 private:
 
-	Area              *mpAreaMain;
-	Area              *mpAreaAct;
-	std::vector<Area*> mAreas;
+	Area               *mpAreaMain;
+	Area               *mpAreaMouse;
+	std::vector<Area*>  mAreas;
+	std::vector<Area*>  mAreasAct;
 };
 
 } // namespace TouchMovie

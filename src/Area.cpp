@@ -1,3 +1,4 @@
+#include "cinder/app/AppBasic.h"
 #include "Area.h"
 #include "cinder/CinderMath.h"
 
@@ -11,7 +12,10 @@ Area::Area( std::string name, Rectf &rect )
 , mRect( rect )
 , mRectOrig( rect )
 , mpMovie( 0 )
-, mAlphaChange( 0 )
+, mFadeIn( 1.0f )
+, mFadeOut( 1.0f )
+, mDrawFrame( false )
+, mShow( false )
 {
 }
 
@@ -45,10 +49,11 @@ void Area::draw()
 
 void Area::show( bool show )
 {
-	if( show )
-		mAlphaChange = mFadeIn;
-	else
-		mAlphaChange = -mFadeOut;
+	if( mShow == show )
+		return;
+
+	mShow     = show;
+	mLastTime = ci::app::getElapsedSeconds();
 }
 
 void Area::setMovie( qtime::MovieGl &movie )
@@ -136,36 +141,37 @@ const bool Area::getDrawFrame() const
 
 void Area::setFadeIn( const float fadeIn )
 {
-	mFadeIn = (1.0f/FRAME_RATE)/fadeIn;
+	mFadeIn = fadeIn;
 }
 
 const float Area::getFadeIn() const
 {
-	return (1.0f/FRAME_RATE)/mFadeIn;
+	return mFadeIn;
 }
 
 void Area::setFadeOut( const float fadeOut )
 {
-	mFadeOut = (1.0f/FRAME_RATE)/fadeOut;
+	mFadeOut = fadeOut;
 }
 
 const float Area::getFadeOut() const
 {
-	return (1.0f/FRAME_RATE)/mFadeOut;
+	return mFadeOut;
 }
 
 void Area::_changeAlpha()
 {
-	if( mAlphaChange == 0 )
+	if( ( mShow == false && getAlpha() == 0.0f )
+	 || ( mShow == true  && getAlpha() == 1.0f ))
 		return;
 
-	setAlpha( getAlpha() + mAlphaChange );
+	double fadeAct = mShow ? mFadeIn : - mFadeOut;
+	double actTime = ci::app::getElapsedSeconds();
+	double alphaChange = ( actTime - mLastTime ) / fadeAct;
 
-	if( ( mAlphaChange < 0 && getAlpha() == 0.0f )
-	 || ( mAlphaChange > 0 && getAlpha() == 1.0f ))
-	{
-		mAlphaChange = 0;
-	}
+	mLastTime = actTime;
+
+	setAlpha( getAlpha() + (float)alphaChange );
 }
 
 } // namespace TouchMovie

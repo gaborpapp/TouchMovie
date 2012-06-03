@@ -28,6 +28,8 @@ void Movie::update()
 
 void Movie::draw()
 {
+	gl::enableAlphaBlending();
+
 	if( mFrame )
 	{
 		Rectf rect = mRect;
@@ -43,6 +45,8 @@ void Movie::draw()
 		gl::color( ColorA( 1.0f, 1.0f, 1.0f, mAlpha )); // red, green, blue, alpha
 		gl::draw( mFrame, mRect );
 	}
+
+	gl::disableAlphaBlending();
 }
 
 bool Movie::isPlaying()
