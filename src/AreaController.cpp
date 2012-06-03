@@ -248,10 +248,6 @@ void AreaController::setTouchPosEnd()
 	{
 		if( _isAreaAct((*p )))
 		{
-			if( (*p) != mpAreaMain )
-			{
-				int df = 0;
-			}
 			(*p)->show( true );
 		}
 		else
