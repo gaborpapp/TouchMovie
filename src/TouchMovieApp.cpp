@@ -59,7 +59,15 @@ void TouchMovieApp::setup()
 	}
 	params::PInterfaceGl::load( paramsXml );
 
-	mKinectUser.setup();
+	try
+	{
+		mKinectUser.setup();
+	}
+	catch ( ... )
+	{
+		app::console() << "Could not open Kinect" << endl;
+		quit();
+	}
 }
 
 void TouchMovieApp::shutdown()

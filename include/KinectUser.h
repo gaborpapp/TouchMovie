@@ -14,7 +14,7 @@ namespace TouchMovie
 class KinectUser
 {
 	public:
-		void setup();
+		void setup( const ci::fs::path &path = "" );
 
 		void update();
 		void draw();

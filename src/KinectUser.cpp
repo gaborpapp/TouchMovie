@@ -17,17 +17,12 @@ using namespace mndl;
 namespace TouchMovie
 {
 
-void KinectUser::setup()
+void KinectUser::setup( const fs::path &path )
 {
-	try
-	{
+	if ( path.empty() )
 		mNI = ni::OpenNI( ni::OpenNI::Device() );
-	}
-	catch ( ... )
-	{
-		app::console() << "Could not open Kinect" << endl;
-		exit( -1 );
-	}
+	else
+		mNI = ni::OpenNI( path );
 
 	mNIUserTracker = mNI.getUserTracker();
 	mNIUserTracker.setSmoothing( 0.7f );
