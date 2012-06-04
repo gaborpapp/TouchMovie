@@ -1,7 +1,7 @@
 TARGET = 'TouchMovieApp'
 
 SOURCES = ['TouchMovieApp.cpp', 'Area.cpp', 'AreaController.cpp',
-		'Movie.cpp', 'PParams.cpp']
+		'Movie.cpp', 'PParams.cpp', 'KinectUser.cpp']
 ASSETS = ['data.xml', 'bg_01.mov', 'rollover_01.mov']
 
 DEBUG = 0
@@ -26,5 +26,6 @@ CVLIBS = CinderOpenCV.getLibs(CINDER_OPENCV_PATH)
 LIBS += [File(s) for s in CVLIBS]
 
 SConscript('../../../scons/SConscript',
-	exports = ['TARGET', 'SOURCES', 'DEBUG', 'INCLUDES', 'LIBS', 'LIBPATH'])
+	exports = ['TARGET', 'SOURCES', 'DEBUG', 'INCLUDES', 'LIBS', 'LIBPATH',
+		'ASSETS'])
 

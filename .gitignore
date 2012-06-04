@@ -12,7 +12,9 @@
 *.a
 
 # scons
-.sconsign.dblite
+scons/*
+!scons/SConstruct
 
 # videos
 assets/*.mov
+
