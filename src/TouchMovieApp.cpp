@@ -150,7 +150,11 @@ void TouchMovieApp::resize( ResizeEvent event )
 	TouchMovie::Area *pAreaMain = mAreaController.getAreaMain();
 
 	if( pAreaMain )
-		pAreaMain->setRect( Rectf( 0, 0, (float)pAreaMain->getWidth(), (float)pAreaMain->getHeight()).getCenteredFit( getWindowBounds(), true ));
+	{
+		Rectf fitRect = Rectf( 0, 0, (float)pAreaMain->getWidth(), (float)pAreaMain->getHeight() ).getCenteredFit( getWindowBounds(), true );
+		pAreaMain->setRect( fitRect );
+		mKinectUser.setBounds( fitRect );
+	}
 
 	mAreaController.resize();
 }
@@ -168,7 +172,13 @@ void TouchMovieApp::draw()
 
 	mAreaController.draw();
 
-	gl::setMatricesWindow( getWindowWidth(), getWindowHeight());
+	TouchMovie::Area *pAreaMain = mAreaController.getAreaMain();
+	Rectf viewportRect = pAreaMain->getRect();
+	ci::Area viewport( (int)viewportRect.getX1(), (int)viewportRect.getY1(),
+			(int)viewportRect.getX2(), (int)viewportRect.getY2() );
+
+	gl::setMatricesWindow( getWindowSize() );
+	gl::setViewport( viewport );
 	mKinectUser.draw();
 
 	mAreaController.setTouchPosBeg();
@@ -179,6 +189,8 @@ void TouchMovieApp::draw()
 		mAreaController.setTouchPos( *it );
 	}
 	mAreaController.setTouchPosEnd();
+
+	gl::setViewport( getWindowBounds() );
 
 	params::PInterfaceGl::draw();
 }

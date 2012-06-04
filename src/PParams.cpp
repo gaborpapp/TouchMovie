@@ -93,12 +93,12 @@ void PInterfaceGl::addPersistentSizeAndPosition()
 
 	std::string idW = name2id("width");
 	size[0] = getXml().hasChild(idW)
-		? getXml().getChild(idW).getValue((float)size[0])
+		? getXml().getChild(idW).getValue((int)size[0])
 		: size[0];
 
 	std::string idH = name2id("height");
 	size[1] = getXml().hasChild(idH)
-		? getXml().getChild(idH).getValue((float)size[1])
+		? getXml().getChild(idH).getValue((int)size[1])
 		: size[1];
 
 	TwSetParam( mBar.get(), NULL, "size", TW_PARAM_INT32, 2, size );

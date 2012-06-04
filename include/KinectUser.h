@@ -2,6 +2,7 @@
 
 #include "cinder/Cinder.h"
 #include "cinder/Shape2d.h"
+#include "cinder/Rect.h"
 
 #include "PParams.h"
 
@@ -20,6 +21,8 @@ class KinectUser
 
 		std::vector< ci::Vec2f > &getHandPositions() { return mHandPositions; }
 
+		void setBounds( const ci::Rectf &rect );
+
 	protected:
 		mndl::ni::OpenNI          mNI;
 		mndl::ni::UserTracker     mNIUserTracker;
@@ -36,6 +39,9 @@ class KinectUser
 		ci::Shape2d			mShape;
 
 		std::vector< ci::Vec2f > mHandPositions;
+
+		ci::Rectf			mOutputRect;
+		ci::RectMapping		mOutputMapping;
 
 		ci::params::PInterfaceGl mParams;
 };

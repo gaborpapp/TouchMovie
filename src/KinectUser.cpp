@@ -13,7 +13,9 @@
 using namespace std;
 using namespace ci;
 using namespace mndl;
-using namespace TouchMovie;
+
+namespace TouchMovie
+{
 
 void KinectUser::setup()
 {
@@ -44,6 +46,8 @@ void KinectUser::setup()
 	mParams.addPersistentParam( " Width", &mOutlineWidth, 3, "min=.5 max=15 step=.2" );
 	mParams.addPersistentParam( " Color", &mOutlineColor, ColorA::hexA( 0x50ffffff ) );
 	mParams.addPersistentParam( " Hand size", &mHandSize, 5., "min=0 max=50 step=.5" );
+
+	setBounds( app::getWindowBounds() );
 }
 
 void KinectUser::update()
@@ -80,12 +84,12 @@ void KinectUser::update()
 			if ( it->empty() )
 				continue;
 
-			mShape.moveTo( fromOcv( *pit ) );
+			mShape.moveTo( mOutputMapping.map( fromOcv( *pit ) ) );
 
 			++pit;
 			for ( ; pit != it->end(); ++pit )
 			{
-				mShape.lineTo( fromOcv( *pit ) );
+				mShape.lineTo( mOutputMapping.map( fromOcv( *pit ) ) );
 			}
 			mShape.close();
 		}
@@ -106,7 +110,7 @@ void KinectUser::update()
 
 			if ( conf > .9 )
 			{
-				mHandPositions.push_back( jointPos );
+				mHandPositions.push_back( mOutputMapping.map( jointPos ) );
 			}
 		}
 	}
@@ -117,16 +121,34 @@ void KinectUser::draw()
 	gl::enableAlphaBlending();
 	gl::color( mOutlineColor );
 
+	float sc = mOutputRect.getWidth() / 640.;
+	float scaledHandSize = mHandSize * sc;
 	for ( vector< Vec2f >::const_iterator it = mHandPositions.begin();
 			it != mHandPositions.end(); ++it )
 	{
-		gl::drawSolidCircle( *it, mHandSize );
+		gl::drawSolidCircle( *it, scaledHandSize );
 	}
 
-	glLineWidth( mOutlineWidth );
+	glLineWidth( mOutlineWidth * sc );
 	gl::draw( mShape );
 	glLineWidth( 1.0 );
 
 	gl::disableAlphaBlending();
 }
+
+void KinectUser::setBounds( const Rectf &rect )
+{
+	mOutputRect = rect;
+
+	Rectf kRect( 0, 0, 640, 480 ); // kinect image rect
+	Rectf dRect = kRect.getCenteredFit( mOutputRect, true );
+	if ( mOutputRect.getAspectRatio() > dRect.getAspectRatio() )
+		dRect.scaleCentered( mOutputRect.getWidth() / dRect.getWidth() );
+	else
+		dRect.scaleCentered( mOutputRect.getHeight() / dRect.getHeight() );
+
+	mOutputMapping = RectMapping( kRect, dRect );
+}
+
+} // namespace TouchMovie
 
