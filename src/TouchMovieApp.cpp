@@ -61,7 +61,19 @@ void TouchMovieApp::setup()
 
 	try
 	{
+		// use kinect
 		mKinectUser.setup();
+
+		// use openni recording
+		/*
+		fs::path recordingPath = getAppPath();
+#if defined( CINDER_MAC )
+		recordingPath /= "..";
+#endif
+		recordingPath /= "touchmovie-captured.oni";
+
+		mKinectUser.setup( recordingPath );
+		*/
 	}
 	catch ( ... )
 	{
