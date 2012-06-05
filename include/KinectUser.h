@@ -37,6 +37,7 @@ class KinectUser
 		float               mOutlineDilateAmt;
 		int                 mOutlineThres;
 		float				mOutlineWidth;
+		float				mMiterLimit;
 		ci::ColorA			mOutlineColor;
 		float				mHandSize;
 

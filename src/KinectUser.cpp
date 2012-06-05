@@ -41,6 +41,7 @@ void KinectUser::setup( const fs::path &path )
 	mParams.addPersistentParam( " Dilate", &mOutlineDilateAmt, 7.0, "min=1 max=15 step=.5" );
 	mParams.addPersistentParam( " Threshold", &mOutlineThres, 128, "min=1 max=255" );
 	mParams.addPersistentParam( " Thickness", &mOutlineWidth, 3, "min=.5 max=15 step=.2" );
+	mParams.addPersistentParam( " Miter limit", &mMiterLimit, .75, "min=-1 max=1 step=.05" );
 	mParams.addPersistentParam( " Color", &mOutlineColor, ColorA::hexA( 0x50ffffff ) );
 	mParams.addPersistentParam( " Hand size", &mHandSize, 5., "min=0 max=50 step=.5" );
 
@@ -201,7 +202,7 @@ void KinectUser::draw()
 
 	mShader.bind();
 	mShader.uniform( "WIN_SCALE", Vec2f( mOutputRect.getSize() ) );
-	mShader.uniform( "MITER_LIMIT", .75f );
+	mShader.uniform( "MITER_LIMIT", mMiterLimit );
 	mShader.uniform( "THICKNESS", mOutlineWidth * sc );
 
 	for ( vector< gl::VboMesh >::const_iterator vit = mVboMeshes.begin();
