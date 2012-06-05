@@ -3,10 +3,14 @@
 #include "cinder/Cinder.h"
 #include "cinder/Shape2d.h"
 #include "cinder/Rect.h"
+#include "cinder/gl/GlslProg.h"
+#include "cinder/gl/Vbo.h"
 
 #include "PParams.h"
 
 #include "CiNI.h"
+
+#define OUTLINE_SHADER 1
 
 namespace TouchMovie
 {
@@ -44,6 +48,11 @@ class KinectUser
 		ci::RectMapping		mOutputMapping;
 
 		ci::params::PInterfaceGl mParams;
+
+#ifdef OUTLINE_SHADER
+		ci::gl::GlslProg mShader;
+		std::vector< ci::gl::VboMesh > mVboMeshes;
+#endif
 };
 
 } // namespace TouchMovie

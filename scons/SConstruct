@@ -3,6 +3,7 @@ TARGET = 'TouchMovieApp'
 SOURCES = ['TouchMovieApp.cpp', 'Area.cpp', 'AreaController.cpp',
 		'Movie.cpp', 'PParams.cpp', 'KinectUser.cpp']
 ASSETS = ['data.xml', 'bg_01.mov', 'rollover_01.mov']
+RESOURCES = ['line.vert', 'line.frag', 'line.geom']
 
 DEBUG = 0
 
@@ -27,5 +28,5 @@ LIBS += [File(s) for s in CVLIBS]
 
 SConscript('../../../scons/SConscript',
 	exports = ['TARGET', 'SOURCES', 'DEBUG', 'INCLUDES', 'LIBS', 'LIBPATH',
-		'ASSETS'])
+		'ASSETS', 'RESOURCES'])
 

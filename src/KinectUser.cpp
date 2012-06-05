@@ -8,6 +8,8 @@
 #include "CinderOpenCV.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#include "Resources.h"
+
 #include "KinectUser.h"
 
 using namespace std;
@@ -43,6 +45,13 @@ void KinectUser::setup( const fs::path &path )
 	mParams.addPersistentParam( " Hand size", &mHandSize, 5., "min=0 max=50 step=.5" );
 
 	setBounds( app::getWindowBounds() );
+
+#ifdef OUTLINE_SHADER
+	mShader = gl::GlslProg( app::loadResource( RES_LINE_VERT ),
+							app::loadResource( RES_LINE_FRAG ),
+							app::loadResource( RES_LINE_GEOM ),
+							GL_LINES_ADJACENCY_EXT, GL_TRIANGLE_STRIP, 7 );
+#endif
 }
 
 void KinectUser::update()
@@ -109,10 +118,108 @@ void KinectUser::update()
 			}
 		}
 	}
+
+#ifdef OUTLINE_SHADER
+	// update vbo from shape points
+	// based on the work of Paul Houx
+	// https://forum.libcinder.org/topic/smooth-thick-lines-using-geometry-shader#23286000001297067
+	mVboMeshes.clear();
+
+	for ( size_t i = 0; i < mShape.getNumContours(); ++i )
+	{
+		const Path2d &path = mShape.getContour( i );
+		const vector< Vec2f > &points = path.getPoints();
+
+		if ( points.size() > 1 )
+		{
+			// create a new vector that can contain 3D vertices
+			vector< Vec3f > vertices;
+			// to improve performance, make room for the vertices + 2
+			// adjacency vertices
+			vertices.reserve( points.size() + 2 );
+
+			// first, add an adjacency vertex at the beginning
+			vertices.push_back( 2.0f * Vec3f( points[ 0 ] ) -
+					Vec3f( points[ 1 ] ) );
+
+			// next, add all 2D points as 3D vertices
+			vector< Vec2f >::const_iterator it;
+			for ( it = points.begin() ; it != points.end(); ++it )
+				vertices.push_back( Vec3f( *it ) );
+
+			// next, add an adjacency vertex at the end
+			size_t n = points.size();
+			vertices.push_back( 2.0f * Vec3f( points[ n - 1 ] ) -
+					Vec3f( points[ n - 2 ] ) );
+
+			// now that we have a list of vertices, create the index buffer
+			n = vertices.size() - 2;
+			vector< uint32_t > indices;
+			indices.reserve( n * 4 );
+
+			for ( size_t i = 1; i < vertices.size() - 2; ++i )
+			{
+				indices.push_back( i - 1 );
+				indices.push_back( i );
+				indices.push_back( i + 1 );
+				indices.push_back( i + 2 );
+			}
+
+			// finally, create the mesh
+			gl::VboMesh::Layout layout;
+			layout.setStaticPositions();
+			layout.setStaticIndices();
+			gl::VboMesh vboMesh = gl::VboMesh( vertices.size(), indices.size(), layout, GL_LINES_ADJACENCY_EXT );
+			vboMesh.bufferPositions( &(vertices.front()), vertices.size() );
+			vboMesh.bufferIndices( indices );
+			vboMesh.unbindBuffers();
+
+			mVboMeshes.push_back( vboMesh );
+		}
+	}
+
+#endif
+
 }
 
 void KinectUser::draw()
 {
+#ifdef OUTLINE_SHADER
+
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+	gl::enableAlphaBlending();
+	gl::color( mOutlineColor );
+
+	float sc = mOutputRect.getWidth() / 640.;
+	float scaledHandSize = mHandSize * sc;
+	for ( vector< Vec2f >::const_iterator it = mHandPositions.begin();
+			it != mHandPositions.end(); ++it )
+	{
+		gl::drawSolidCircle( *it, scaledHandSize );
+	}
+
+	mShader.bind();
+	mShader.uniform( "WIN_SCALE", Vec2f( mOutputRect.getSize() ) );
+	mShader.uniform( "MITER_LIMIT", .75f );
+	mShader.uniform( "THICKNESS", mOutlineWidth * sc );
+
+	for ( vector< gl::VboMesh >::const_iterator vit = mVboMeshes.begin();
+			vit != mVboMeshes.end(); ++vit )
+	{
+		gl::draw( *vit );
+	}
+
+	mShader.unbind();
+
+	gl::disableAlphaBlending();
+	gl::disableDepthRead();
+	gl::disableDepthWrite();
+
+#else
+
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
 	gl::enableAlphaBlending();
 	gl::color( mOutlineColor );
 
@@ -129,6 +236,10 @@ void KinectUser::draw()
 	glLineWidth( 1.0 );
 
 	gl::disableAlphaBlending();
+	gl::disableDepthRead();
+	gl::disableDepthWrite();
+
+#endif
 }
 
 void KinectUser::setBounds( const Rectf &rect )
