@@ -27,7 +27,6 @@ void KinectUser::setup( const fs::path &path )
 		mNI = ni::OpenNI( path );
 
 	mNIUserTracker = mNI.getUserTracker();
-	mNIUserTracker.setSmoothing( 0.7f );
 
 	mNI.setMirrored();
 	mNI.start();
@@ -36,6 +35,7 @@ void KinectUser::setup( const fs::path &path )
 	mParams.addPersistentSizeAndPosition();
 
 	mParams.addText( "User outlines" );
+	mParams.addPersistentParam( " Enable", &mOutlineEnable, true );
 	mParams.addPersistentParam( " Blur", &mOutlineBlurAmt, 15.0, "min=1 max=15 step=.5" );
 	mParams.addPersistentParam( " Erode", &mOutlineErodeAmt, 3.0, "min=1 max=15 step=.5" );
 	mParams.addPersistentParam( " Dilate", &mOutlineDilateAmt, 7.0, "min=1 max=15 step=.5" );
@@ -43,7 +43,10 @@ void KinectUser::setup( const fs::path &path )
 	mParams.addPersistentParam( " Thickness", &mOutlineWidth, 3, "min=.5 max=15 step=.2" );
 	mParams.addPersistentParam( " Miter limit", &mMiterLimit, .75, "min=-1 max=1 step=.05" );
 	mParams.addPersistentParam( " Color", &mOutlineColor, ColorA::hexA( 0x50ffffff ) );
+	mParams.addText( "Hand" );
 	mParams.addPersistentParam( " Hand size", &mHandSize, 5., "min=0 max=50 step=.5" );
+	mParams.addPersistentParam( " Hand Color", &mHandColor, ColorA::hexA( 0x50ffffff ) );
+	mParams.addPersistentParam( " Hand smoothing", &mHandSmoothing, .7, "min=0 max=1 step=.05" );
 
 	setBounds( app::getWindowBounds() );
 
@@ -57,7 +60,8 @@ void KinectUser::setup( const fs::path &path )
 
 void KinectUser::update()
 {
-	if ( mNI.checkNewVideoFrame() )
+	mNIUserTracker.setSmoothing( mHandSmoothing );
+	if ( mNI.checkNewVideoFrame() && mOutlineEnable )
 	{
 		// generate user outline shapes
 		Surface8u maskSurface = mNIUserTracker.getUserMask();
@@ -124,123 +128,114 @@ void KinectUser::update()
 	// update vbo from shape points
 	// based on the work of Paul Houx
 	// https://forum.libcinder.org/topic/smooth-thick-lines-using-geometry-shader#23286000001297067
-	mVboMeshes.clear();
-
-	for ( size_t i = 0; i < mShape.getNumContours(); ++i )
+	if ( mOutlineEnable )
 	{
-		const Path2d &path = mShape.getContour( i );
-		const vector< Vec2f > &points = path.getPoints();
+		mVboMeshes.clear();
 
-		if ( points.size() > 1 )
+		for ( size_t i = 0; i < mShape.getNumContours(); ++i )
 		{
-			// create a new vector that can contain 3D vertices
-			vector< Vec3f > vertices;
-			// to improve performance, make room for the vertices + 2
-			// adjacency vertices
-			vertices.reserve( points.size() + 2 );
+			const Path2d &path = mShape.getContour( i );
+			const vector< Vec2f > &points = path.getPoints();
 
-			// first, add an adjacency vertex at the beginning
-			vertices.push_back( 2.0f * Vec3f( points[ 0 ] ) -
-					Vec3f( points[ 1 ] ) );
-
-			// next, add all 2D points as 3D vertices
-			vector< Vec2f >::const_iterator it;
-			for ( it = points.begin() ; it != points.end(); ++it )
-				vertices.push_back( Vec3f( *it ) );
-
-			// next, add an adjacency vertex at the end
-			size_t n = points.size();
-			vertices.push_back( 2.0f * Vec3f( points[ n - 1 ] ) -
-					Vec3f( points[ n - 2 ] ) );
-
-			// now that we have a list of vertices, create the index buffer
-			n = vertices.size() - 2;
-			vector< uint32_t > indices;
-			indices.reserve( n * 4 );
-
-			for ( size_t i = 1; i < vertices.size() - 2; ++i )
+			if ( points.size() > 1 )
 			{
-				indices.push_back( i - 1 );
-				indices.push_back( i );
-				indices.push_back( i + 1 );
-				indices.push_back( i + 2 );
+				// create a new vector that can contain 3D vertices
+				vector< Vec3f > vertices;
+				// to improve performance, make room for the vertices + 2
+				// adjacency vertices
+				vertices.reserve( points.size() + 2 );
+
+				// first, add an adjacency vertex at the beginning
+				vertices.push_back( 2.0f * Vec3f( points[ 0 ] ) -
+						Vec3f( points[ 1 ] ) );
+
+				// next, add all 2D points as 3D vertices
+				vector< Vec2f >::const_iterator it;
+				for ( it = points.begin() ; it != points.end(); ++it )
+					vertices.push_back( Vec3f( *it ) );
+
+				// next, add an adjacency vertex at the end
+				size_t n = points.size();
+				vertices.push_back( 2.0f * Vec3f( points[ n - 1 ] ) -
+						Vec3f( points[ n - 2 ] ) );
+
+				// now that we have a list of vertices, create the index buffer
+				n = vertices.size() - 2;
+				vector< uint32_t > indices;
+				indices.reserve( n * 4 );
+
+				for ( size_t i = 1; i < vertices.size() - 2; ++i )
+				{
+					indices.push_back( i - 1 );
+					indices.push_back( i );
+					indices.push_back( i + 1 );
+					indices.push_back( i + 2 );
+				}
+
+				// finally, create the mesh
+				gl::VboMesh::Layout layout;
+				layout.setStaticPositions();
+				layout.setStaticIndices();
+				gl::VboMesh vboMesh = gl::VboMesh( vertices.size(), indices.size(), layout, GL_LINES_ADJACENCY_EXT );
+				vboMesh.bufferPositions( &(vertices.front()), vertices.size() );
+				vboMesh.bufferIndices( indices );
+				vboMesh.unbindBuffers();
+
+				mVboMeshes.push_back( vboMesh );
 			}
-
-			// finally, create the mesh
-			gl::VboMesh::Layout layout;
-			layout.setStaticPositions();
-			layout.setStaticIndices();
-			gl::VboMesh vboMesh = gl::VboMesh( vertices.size(), indices.size(), layout, GL_LINES_ADJACENCY_EXT );
-			vboMesh.bufferPositions( &(vertices.front()), vertices.size() );
-			vboMesh.bufferIndices( indices );
-			vboMesh.unbindBuffers();
-
-			mVboMeshes.push_back( vboMesh );
 		}
 	}
-
 #endif
-
 }
 
 void KinectUser::draw()
 {
+	gl::enable( GL_SCISSOR_TEST );
+	// FIXME: video is one pixel smaller?
+	glScissor( mOutputRect.getX1(), mOutputRect.getY1() + 1,
+			mOutputRect.getWidth(), mOutputRect.getHeight() - 2 );
+
+	gl::enableDepthRead();
+	gl::enableDepthWrite();
+	gl::enableAlphaBlending();
+
+	gl::color( mHandColor );
+	float sc = mOutputRect.getWidth() / 640.;
+	float scaledHandSize = mHandSize * sc;
+	for ( vector< Vec2f >::const_iterator it = mHandPositions.begin();
+			it != mHandPositions.end(); ++it )
+	{
+		gl::drawSolidCircle( *it, scaledHandSize );
+	}
+
+	gl::color( mOutlineColor );
+	if ( mOutlineEnable )
+	{
 #ifdef OUTLINE_SHADER
+		mShader.bind();
+		mShader.uniform( "WIN_SCALE", Vec2f( mOutputRect.getSize() ) );
+		mShader.uniform( "MITER_LIMIT", mMiterLimit );
+		mShader.uniform( "THICKNESS", mOutlineWidth * sc );
 
-	gl::enableDepthRead();
-	gl::enableDepthWrite();
-	gl::enableAlphaBlending();
-	gl::color( mOutlineColor );
+		for ( vector< gl::VboMesh >::const_iterator vit = mVboMeshes.begin();
+				vit != mVboMeshes.end(); ++vit )
+		{
+			gl::draw( *vit );
+		}
 
-	float sc = mOutputRect.getWidth() / 640.;
-	float scaledHandSize = mHandSize * sc;
-	for ( vector< Vec2f >::const_iterator it = mHandPositions.begin();
-			it != mHandPositions.end(); ++it )
-	{
-		gl::drawSolidCircle( *it, scaledHandSize );
-	}
-
-	mShader.bind();
-	mShader.uniform( "WIN_SCALE", Vec2f( mOutputRect.getSize() ) );
-	mShader.uniform( "MITER_LIMIT", mMiterLimit );
-	mShader.uniform( "THICKNESS", mOutlineWidth * sc );
-
-	for ( vector< gl::VboMesh >::const_iterator vit = mVboMeshes.begin();
-			vit != mVboMeshes.end(); ++vit )
-	{
-		gl::draw( *vit );
-	}
-
-	mShader.unbind();
-
-	gl::disableAlphaBlending();
-	gl::disableDepthRead();
-	gl::disableDepthWrite();
-
+		mShader.unbind();
 #else
-
-	gl::enableDepthRead();
-	gl::enableDepthWrite();
-	gl::enableAlphaBlending();
-	gl::color( mOutlineColor );
-
-	float sc = mOutputRect.getWidth() / 640.;
-	float scaledHandSize = mHandSize * sc;
-	for ( vector< Vec2f >::const_iterator it = mHandPositions.begin();
-			it != mHandPositions.end(); ++it )
-	{
-		gl::drawSolidCircle( *it, scaledHandSize );
+		glLineWidth( mOutlineWidth * sc );
+		gl::draw( mShape );
+		glLineWidth( 1.0 );
+#endif
 	}
-
-	glLineWidth( mOutlineWidth * sc );
-	gl::draw( mShape );
-	glLineWidth( 1.0 );
 
 	gl::disableAlphaBlending();
 	gl::disableDepthRead();
 	gl::disableDepthWrite();
 
-#endif
+	gl::disable( GL_SCISSOR_TEST );
 }
 
 void KinectUser::setBounds( const Rectf &rect )
@@ -254,7 +249,7 @@ void KinectUser::setBounds( const Rectf &rect )
 	else
 		dRect.scaleCentered( mOutputRect.getHeight() / dRect.getHeight() );
 
-	mOutputMapping = RectMapping( kRect, dRect );
+	mOutputMapping = RectMapping( kRect, dRect, true );
 }
 
 } // namespace TouchMovie

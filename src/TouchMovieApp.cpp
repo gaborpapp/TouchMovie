@@ -61,19 +61,21 @@ void TouchMovieApp::setup()
 
 	try
 	{
+#define USE_KINECT 0
+
+#if USE_KINECT
 		// use kinect
 		mKinectUser.setup();
-
+#else
 		// use openni recording
-		/*
 		fs::path recordingPath = getAppPath();
-#if defined( CINDER_MAC )
+	#if defined( CINDER_MAC )
 		recordingPath /= "..";
-#endif
+	#endif
 		recordingPath /= "touchmovie-captured.oni";
 
 		mKinectUser.setup( recordingPath );
-		*/
+#endif
 	}
 	catch ( ... )
 	{
@@ -198,7 +200,6 @@ void TouchMovieApp::draw()
 			(int)viewportRect.getX2(), (int)viewportRect.getY2() );
 
 	gl::setMatricesWindow( getWindowSize() );
-	gl::setViewport( viewport );
 	mKinectUser.draw();
 
 	mAreaController.setTouchPosBeg();

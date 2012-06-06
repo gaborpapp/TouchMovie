@@ -40,10 +40,7 @@ void Area::draw()
 	if( mDrawFrame )
 	{
 		gl::drawString( mName, mRect.getUpperLeft());
-		gl::drawLine( mRect.getUpperLeft() , mRect.getUpperRight());
-		gl::drawLine( mRect.getUpperRight(), mRect.getLowerRight());
-		gl::drawLine( mRect.getLowerRight(), mRect.getLowerLeft() );
-		gl::drawLine( mRect.getLowerLeft() , mRect.getUpperLeft() );
+		gl::drawStrokedRect( mRect );
 	}
 }
 

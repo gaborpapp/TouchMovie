@@ -28,25 +28,28 @@ class KinectUser
 		void setBounds( const ci::Rectf &rect );
 
 	protected:
-		mndl::ni::OpenNI          mNI;
-		mndl::ni::UserTracker     mNIUserTracker;
+		mndl::ni::OpenNI mNI;
+		mndl::ni::UserTracker mNIUserTracker;
 
 		// user outline
-		float               mOutlineBlurAmt;
-		float               mOutlineErodeAmt;
-		float               mOutlineDilateAmt;
-		int                 mOutlineThres;
-		float				mOutlineWidth;
-		float				mMiterLimit;
-		ci::ColorA			mOutlineColor;
-		float				mHandSize;
+		bool mOutlineEnable;
+		float mOutlineBlurAmt;
+		float mOutlineErodeAmt;
+		float mOutlineDilateAmt;
+		int mOutlineThres;
+		float mOutlineWidth;
+		float mMiterLimit;
+		ci::ColorA mOutlineColor;
+		float mHandSize;
+		ci::ColorA mHandColor;
+		float mHandSmoothing;
 
-		ci::Shape2d			mShape;
+		ci::Shape2d mShape;
 
 		std::vector< ci::Vec2f > mHandPositions;
 
-		ci::Rectf			mOutputRect;
-		ci::RectMapping		mOutputMapping;
+		ci::Rectf mOutputRect;
+		ci::RectMapping mOutputMapping;
 
 		ci::params::PInterfaceGl mParams;
 
