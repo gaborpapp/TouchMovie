@@ -1,4 +1,5 @@
 #include "cinder/app/App.h"
+#include "cinder/ImageIo.h"
 #include "AreaController.h"
 
 using namespace ci;
@@ -8,9 +9,15 @@ namespace TouchMovie
 {
 
 AreaController::AreaController()
-: mpAreaMain( 0 )
+: mpBackground( 0 )
 , mpAreaMouse( 0 )
 {
+}
+
+AreaController::~AreaController()
+{
+	if( mpBackground )
+		delete mpBackground;
 }
 
 void AreaController::update()
@@ -23,6 +30,9 @@ void AreaController::update()
 
 void AreaController::draw()
 {
+	if( mpBackground )
+		mpBackground->draw();
+
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
 		(*p)->draw();
@@ -40,6 +50,30 @@ void AreaController::mouseDown( MouseEvent event )
 
 void AreaController::mouseUp( MouseEvent event )
 {
+}
+
+void AreaController::setBackground( fs::path pathPicture, int width, int height )
+{
+	try
+	{
+		Rectf rect = Rectf( 0.0f, 0.0f, (float)width, (float)height );
+		fs::path xmlPath( getAssetPath( pathPicture ));
+		ci::ImageSourceRef imageSource = loadImage( xmlPath );
+
+		if( mpBackground )
+			delete mpBackground;
+
+		mpBackground = new Background( imageSource, rect );
+	}
+	catch( ... )
+	{
+		console() << "Unable to load the picture: " << pathPicture << std::endl;
+	}
+}
+
+Background *AreaController::getBackground()
+{
+	return mpBackground;
 }
 
 void AreaController::addArea( std::string name, Rectf &rect )
@@ -60,60 +94,52 @@ void AreaController::removeArea( std::string name )
 	}
 }
 
-void AreaController::setMain( std::string name, bool main )
-{
-	if( main )
-	{
-		mpAreaMain = _getArea( name );
-		if( mpAreaMain )
-			mpAreaMain->setAlpha( 1.0f );
-	}
-	else if( mpAreaMain && mpAreaMain->getName() == name )
-	{
-		mpAreaMain = 0;
-	}
-
-	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
-	{
-		if( (*p) != mpAreaMain )
-			(*p)->setAlpha( 0.0f );
-	}
-}
-
-bool AreaController::setMovie( std::string name, fs::path pathMovie )
+void AreaController::setMovieBack( std::string name, fs::path pathMovie )
 {
 	Area *pArea = _getArea( name );
 
 	if( pArea )
 	{
-		try
-		{
-			// load up the movie, set it to loop, and begin playing
-			if( pathMovie.string().find( "http://") != std::string::npos )
-			{
-				qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( pathMovie.string()));
-				movieLoader.waitForPlaythroughOk();
-				qtime::MovieGl movie = qtime::MovieGl( movieLoader );
-				pArea->setMovie( movie );
-			}
-			else
-			{
-				fs::path xmlPath( getAssetPath( pathMovie ));
+		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
+		pArea->setMovieBack( movie );
+	}
+}
 
-				qtime::MovieGl movie = qtime::MovieGl( xmlPath );
-				pArea->setMovie( movie );
-			}
-		}
-		catch( ... )
-		{
-			console() << "Unable to load the movie: " << name << " - (" << pathMovie << ")" << std::endl;
-			return false;
-		}
+void AreaController::setMovieFore( std::string name, fs::path pathMovie )
+{
+	Area *pArea = _getArea( name );
 
-		return true;
+	if( pArea )
+	{
+		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
+		pArea->setMovieFore( movie );
+	}
+}
+
+qtime::MovieGl AreaController::_loadMovie( fs::path pathMovie )
+{
+	try
+	{
+		// load up the movie, set it to loop, and begin playing
+		if( pathMovie.string().find( "http://") != std::string::npos )
+		{
+			qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( pathMovie.string()));
+			movieLoader.waitForPlaythroughOk();
+			return qtime::MovieGl( movieLoader );
+		}
+		else
+		{
+			fs::path xmlPath( getAssetPath( pathMovie ));
+
+			return qtime::MovieGl( xmlPath );
+		}
+	}
+	catch( ... )
+	{
+		console() << "Unable to load the movie: " << pathMovie << std::endl;
 	}
 
-	return false;
+	return qtime::MovieGl();
 }
 
 void AreaController::setRect( std::string name, Rectf &rect )
@@ -122,34 +148,6 @@ void AreaController::setRect( std::string name, Rectf &rect )
 
 	if( pArea )
 		pArea->setRect( rect );
-}
-
-void AreaController::setAlpha( std::string name, float alpha )
-{
-	Area *pArea = _getArea( name );
-
-	if( pArea )
-		pArea->setAlpha( alpha );
-}
-
-const int AreaController::getWidth( std::string name )
-{
-	Area *pArea = _getArea( name );
-
-	if( pArea )
-		return pArea->getWidth();
-
-	return 0;
-}
-
-const int AreaController::getHeigth( std::string name )
-{
-	Area *pArea = _getArea( name );
-
-	if( pArea )
-		return pArea->getHeight();
-
-	return 0;
 }
 
 void AreaController::setDrawFrame( std::string name, bool drawFrame )
@@ -206,27 +204,22 @@ float AreaController::getFadeOut( std::string name )
 	return 0;
 }
 
-Area *AreaController::getAreaMain()
-{
-	return mpAreaMain;
-}
-
 void AreaController::resize()
 {
-	Rectf rectMainOrig = mpAreaMain->getRectOrig();
-	Rectf rectMainNew  = mpAreaMain->getRect();
+	if( ! mpBackground )
+		return;
 
-	RectMapping rectMapping( rectMainOrig, rectMainNew, false );
+	Rectf rectBackgroundOrig = mpBackground->getRectOrig();
+	Rectf rectBackgroundNew  = mpBackground->getRect();
+
+	RectMapping rectMapping( rectBackgroundOrig, rectBackgroundNew, false );
 
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		if((*p) != mpAreaMain )
-		{
-			Rectf rectOrig = (*p)->getRectOrig();
-			Rectf rectNew  = Rectf( rectMapping.map( rectOrig.getUpperLeft()), rectMapping.map( rectOrig.getLowerRight()));
+		Rectf rectOrig = (*p)->getRectOrig();
+		Rectf rectNew  = Rectf( rectMapping.map( rectOrig.getUpperLeft()), rectMapping.map( rectOrig.getLowerRight()));
 
-			(*p)->setRect( rectNew );
-		}
+		(*p)->setRect( rectNew );
 	}
 }
 
@@ -248,11 +241,11 @@ void AreaController::setTouchPosEnd()
 	{
 		if( _isAreaAct((*p )))
 		{
-			(*p)->show( true );
+			(*p)->setActive( true );
 		}
 		else
 		{
-			(*p)->show( false );
+			(*p)->setActive( false );
 		}
 	}
 
@@ -276,8 +269,7 @@ Area *AreaController::_getArea( const Vec2i &pos )
 {
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		if( (*p) != mpAreaMain
-		 && (*p)->getRect().contains( pos ))
+		if((*p)->getRect().contains( pos ))
 		{
 			return *p;
 		}
@@ -288,8 +280,7 @@ Area *AreaController::_getArea( const Vec2i &pos )
 
 bool AreaController::_isAreaAct( Area *pArea )
 {
-	if( pArea == mpAreaMain
-	 || pArea == mpAreaMouse )
+	if( pArea == mpAreaMouse )
 		return true;
 
 	for( std::vector<Area*>::iterator p = mAreasAct.begin(); p != mAreasAct.end(); ++p )

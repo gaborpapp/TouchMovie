@@ -8,6 +8,8 @@
 
 #include "PParams.h"
 
+#if USE_KINECT == 1
+
 #include "CiNI.h"
 
 #define OUTLINE_SHADER 1
@@ -61,3 +63,4 @@ class KinectUser
 
 } // namespace TouchMovie
 
+#endif /* USE_KINECT */

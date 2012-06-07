@@ -10,6 +10,8 @@
 
 #include "Resources.h"
 
+#if USE_KINECT == 1
+
 #include "KinectUser.h"
 
 using namespace std;
@@ -254,3 +256,4 @@ void KinectUser::setBounds( const Rectf &rect )
 
 } // namespace TouchMovie
 
+#endif /* USE_KINECT */

@@ -15,16 +15,15 @@ public:
 	void draw();
 
 	bool              isPlaying();
-	void              play();
+	void              play( bool fromStart );
 	void              stop();
+	float             getCurrentTime();
+	void              setCurrentTime( float time );
 
 	void              setAlpha( const float alpha );
 	float             getAlpha() const;
 	void              setRect( const ci::Rectf &alpha );
 	const ci::Rectf   getRect() const;
-
-	const int         getWidth() const;
-	const int         getHeight() const;
 
 private:
 	ci::qtime::MovieGl mMovie;

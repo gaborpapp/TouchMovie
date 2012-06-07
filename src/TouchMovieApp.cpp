@@ -1,10 +1,13 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/Xml.h"
-#include "cinder/gl/gl.h"
 #include "PParams.h"
+
+#define USE_KINECT        1
+#define USE_KINECT_RECORD 0
 
 #include "AreaController.h"
 #include "Area.h"
+#include "Background.h"
 #include "KinectUser.h"
 
 using namespace ci;
@@ -31,10 +34,9 @@ private:
 	int                 mWidth;
 	int                 mHeight;
 
-	KinectUser			mKinectUser;
-	ci::params::PInterfaceGl mParams;
-
-	float				mFps;
+#if USE_KINECT == 1
+	KinectUser          mKinectUser;
+#endif /* USE_KINECT */
 };
 
 
@@ -62,14 +64,10 @@ void TouchMovieApp::setup()
 	}
 	params::PInterfaceGl::load( paramsXml );
 
-	mParams = params::PInterfaceGl( "TouchMovie", Vec2i( 300, 300 ) );
-	mParams.addParam( "Fps", &mFps, "", false );
-
+#if USE_KINECT == 1
 	try
 	{
-#define USE_KINECT 0
-
-#if USE_KINECT
+#if USE_KINECT_RECORD == 0
 		// use kinect
 		mKinectUser.setup();
 #else
@@ -81,13 +79,14 @@ void TouchMovieApp::setup()
 		recordingPath /= "touchmovie-captured.oni";
 
 		mKinectUser.setup( recordingPath );
-#endif
+#endif /* USE_KINECT_RECORD */
 	}
 	catch ( ... )
 	{
 		app::console() << "Could not open Kinect" << endl;
 		quit();
 	}
+#endif /* USE_KINECT */
 }
 
 void TouchMovieApp::shutdown()
@@ -118,40 +117,40 @@ void TouchMovieApp::LoadXml( std::string xmlName )
 		mHeight   = xmlSettings.getAttributeValue<int> ( "Height"   , 600 );
 		drawFrame = xmlSettings.getAttributeValue<bool>( "DrawFrame", 0   );
 	}
+	if( doc.hasChild( "Background" ))
+	{
+		XmlTree xmlBackground = doc.getChild( "Background" );
+
+		std::string strPath = xmlBackground.getAttributeValue<std::string>( "Path"        );
+		int         width   = xmlBackground.getAttributeValue<int>        ( "Width" , 800 );
+		int         height  = xmlBackground.getAttributeValue<int>        ( "Height", 600 );
+
+		mAreaController.setBackground( strPath, width, height );
+	}
 	if( doc.hasChild( "TouchMovie" ))
 	{
 		XmlTree xmlTouchMovie = doc.getChild( "TouchMovie" );
 
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			std::string strName   = child->getAttributeValue<std::string>( "Name"         );
-			std::string strPath   = child->getAttributeValue<std::string>( "Path"         );
-			bool        main      = child->getAttributeValue<bool>       ( "Main"   , 0   );
-			float       fadeIn    = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
-			float       fadeOut   = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
-			int         x1 = 0;
-			int         y1 = 0;
-			int         x2 = 0;
-			int         y2 = 0;
+			std::string strName     = child->getAttributeValue<std::string>( "Name"         );
+			std::string strPathBack = child->getAttributeValue<std::string>( "PathBack"     );
+			std::string strPathFore = child->getAttributeValue<std::string>( "PathFore"     );
+			float       fadeIn      = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
+			float       fadeOut     = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
+			float       x1          = child->getAttributeValue<float>      ( "x1"     , 1.0 );
+			float       y1          = child->getAttributeValue<float>      ( "y1"     , 1.0 );
+			float       x2          = child->getAttributeValue<float>      ( "x2"     , 1.0 );
+			float       y2          = child->getAttributeValue<float>      ( "y2"     , 1.0 );
 
-			if( child->hasChild( "Rect" ))
-			{
-				XmlTree xmlRect = child->getChild( "Rect" );
+			Rectf rect = Rectf( x1, y1, x2, y2 );
 
-				x1 = xmlRect.getAttributeValue<int>( "x1", 0 );
-				y1 = xmlRect.getAttributeValue<int>( "y1", 0 );
-				x2 = xmlRect.getAttributeValue<int>( "x2", 0 );
-				y2 = xmlRect.getAttributeValue<int>( "y2", 0 );
-			}
-
-			Rectf rect = Rectf((float)x1, (float)y1, (float)x2, (float)y2 );
-
-			mAreaController.addArea     ( strName, rect      );
-			mAreaController.setMovie    ( strName, strPath   );
-			mAreaController.setMain     ( strName, main      );
-			mAreaController.setDrawFrame( strName, drawFrame );
-			mAreaController.setFadeIn   ( strName, fadeIn    );
-			mAreaController.setFadeOut  ( strName, fadeOut   );
+			mAreaController.addArea     ( strName, rect        );
+			mAreaController.setMovieBack( strName, strPathBack );
+			mAreaController.setMovieFore( strName, strPathFore );
+			mAreaController.setDrawFrame( strName, drawFrame   );
+			mAreaController.setFadeIn   ( strName, fadeIn      );
+			mAreaController.setFadeOut  ( strName, fadeOut     );
 		}
 	}
 }
@@ -175,13 +174,15 @@ void TouchMovieApp::mouseMove( MouseEvent event )
 
 void TouchMovieApp::resize( ResizeEvent event )
 {
-	TouchMovie::Area *pAreaMain = mAreaController.getAreaMain();
+	Background *pBackground = mAreaController.getBackground();
 
-	if( pAreaMain )
+	if( pBackground )
 	{
-		Rectf fitRect = Rectf( 0, 0, (float)pAreaMain->getWidth(), (float)pAreaMain->getHeight() ).getCenteredFit( getWindowBounds(), true );
-		pAreaMain->setRect( fitRect );
+		Rectf fitRect = pBackground->getRectOrig().getCenteredFit( getWindowBounds(), true );
+		pBackground->setRect( fitRect );
+#if USE_KINECT == 1
 		mKinectUser.setBounds( fitRect );
+#endif /* USE_KINECT */
 	}
 
 	mAreaController.resize();
@@ -191,9 +192,9 @@ void TouchMovieApp::update()
 {
 	mAreaController.update();
 
+#if USE_KINECT == 1
 	mKinectUser.update();
-
-	mFps = getAverageFps();
+#endif /* USE_KINECT */
 }
 
 void TouchMovieApp::draw()
@@ -202,12 +203,13 @@ void TouchMovieApp::draw()
 
 	mAreaController.draw();
 
-	TouchMovie::Area *pAreaMain = mAreaController.getAreaMain();
-	Rectf viewportRect = pAreaMain->getRect();
+	Background *pBackground = mAreaController.getBackground();
+	Rectf viewportRect = pBackground->getRect();
 	ci::Area viewport( (int)viewportRect.getX1(), (int)viewportRect.getY1(),
 			(int)viewportRect.getX2(), (int)viewportRect.getY2() );
 
 	gl::setMatricesWindow( getWindowSize() );
+#if USE_KINECT == 1
 	mKinectUser.draw();
 
 	mAreaController.setTouchPosBeg();
@@ -217,9 +219,10 @@ void TouchMovieApp::draw()
 	{
 		mAreaController.setTouchPos( *it );
 	}
+#endif /* USE_KINECT */
 	mAreaController.setTouchPosEnd();
 
-	gl::setViewport( getWindowBounds() );
+	gl::setViewport( getWindowBounds());
 
 	params::PInterfaceGl::draw();
 }

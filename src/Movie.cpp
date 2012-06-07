@@ -54,15 +54,26 @@ bool Movie::isPlaying()
 	return mMovie.isPlaying();
 }
 
-void Movie::play()
+void Movie::play( bool fromStart )
 {
-	mMovie.seekToStart();
+	if( fromStart )
+		mMovie.seekToStart();
 	mMovie.play();
 }
 
 void Movie::stop()
 {
 	mMovie.stop();
+}
+
+float Movie::getCurrentTime()
+{
+	return mMovie.getCurrentTime();
+}
+
+void Movie::setCurrentTime( float time )
+{
+	mMovie.seekToTime( time );
 }
 
 void Movie::setAlpha( const float alpha )
@@ -83,16 +94,6 @@ void Movie::setRect( const Rectf &rect )
 const Rectf Movie::getRect() const
 {
 	return mRect;
-}
-
-const int Movie::getWidth() const
-{
-	return mMovie.getWidth();
-}
-
-const int Movie::getHeight() const
-{
-	return mMovie.getHeight();
 }
 
 } // namespace TouchMovie
