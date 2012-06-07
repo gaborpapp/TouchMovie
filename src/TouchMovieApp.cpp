@@ -32,6 +32,9 @@ private:
 	int                 mHeight;
 
 	KinectUser			mKinectUser;
+	ci::params::PInterfaceGl mParams;
+
+	float				mFps;
 };
 
 
@@ -58,6 +61,9 @@ void TouchMovieApp::setup()
 		paramsXml = assetPath / "params.xml" ;
 	}
 	params::PInterfaceGl::load( paramsXml );
+
+	mParams = params::PInterfaceGl( "TouchMovie", Vec2i( 300, 300 ) );
+	mParams.addParam( "Fps", &mFps, "", false );
 
 	try
 	{
@@ -186,6 +192,8 @@ void TouchMovieApp::update()
 	mAreaController.update();
 
 	mKinectUser.update();
+
+	mFps = getAverageFps();
 }
 
 void TouchMovieApp::draw()
