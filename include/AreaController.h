@@ -38,13 +38,16 @@ public:
 	void setTouchPos   ( ci::Vec2f jointPos );
 	void setTouchPosEnd();
 
-	void        setBackground( ci::fs::path pathPicture, int width, int height );
+	void        setBackground( int width, int height );
+	void        setBackgroundImage( ci::fs::path pathImage );
+	void        setBackgroundMovie( ci::fs::path pathMovie );
 	Background *getBackground();
 private:
 	Area  *_getArea( std::string name );
 	Area  *_getArea( const ci::Vec2i &pos );
 	bool   _isAreaAct ( Area *pArea );
 	ci::qtime::MovieGl _loadMovie( ci::fs::path pathMovie );
+	ci::ImageSourceRef _loadImage( ci::fs::path pathImage );
 
 private:
 	Background         *mpBackground;

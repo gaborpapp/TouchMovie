@@ -8,7 +8,8 @@
   DrawFrame = "1">
 </Settings>
 <Background
-  Path      = "back.jpg"
+  PathImage = "back.jpg"
+  PathMovie = "Meditacio_LOOP_RGB_ALPHA_01.mov"
   Width     = "1500"
   Height    = "750">
 </Background>

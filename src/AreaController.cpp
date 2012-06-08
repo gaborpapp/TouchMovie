@@ -22,6 +22,9 @@ AreaController::~AreaController()
 
 void AreaController::update()
 {
+	if( mpBackground )
+		mpBackground->update();
+
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
 		(*p)->update();
@@ -52,22 +55,32 @@ void AreaController::mouseUp( MouseEvent event )
 {
 }
 
-void AreaController::setBackground( fs::path pathPicture, int width, int height )
+void AreaController::setBackground( int width, int height )
 {
-	try
+	if( mpBackground )
+		delete mpBackground;
+
+	Rectf rect = Rectf( 0.0f, 0.0f, (float)width, (float)height );
+	mpBackground = new Background( rect );
+}
+
+void AreaController::setBackgroundImage( fs::path pathImage )
+{
+	if( mpBackground && ! pathImage.empty())
 	{
-		Rectf rect = Rectf( 0.0f, 0.0f, (float)width, (float)height );
-		fs::path xmlPath( getAssetPath( pathPicture ));
-		ci::ImageSourceRef imageSource = loadImage( xmlPath );
-
-		if( mpBackground )
-			delete mpBackground;
-
-		mpBackground = new Background( imageSource, rect );
+		ci::ImageSourceRef imageSource = _loadImage( pathImage );
+		if( imageSource )
+			mpBackground->setImage( imageSource );
 	}
-	catch( ... )
+}
+
+void AreaController::setBackgroundMovie( fs::path pathMovie )
+{
+	if( mpBackground && ! pathMovie.empty())
 	{
-		console() << "Unable to load the picture: " << pathPicture << std::endl;
+		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
+		if( movie )
+			mpBackground->setMovie( movie );
 	}
 }
 
@@ -101,7 +114,8 @@ void AreaController::setMovieIdle( std::string name, fs::path pathMovie )
 	if( pArea )
 	{
 		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
-		pArea->setMovieIdle( movie );
+		if( movie )
+			pArea->setMovieIdle( movie );
 	}
 }
 
@@ -112,7 +126,8 @@ void AreaController::setMovieActive( std::string name, fs::path pathMovie )
 	if( pArea )
 	{
 		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
-		pArea->setMovieActive( movie );
+		if( movie )
+			pArea->setMovieActive( movie );
 	}
 }
 
@@ -140,6 +155,21 @@ qtime::MovieGl AreaController::_loadMovie( fs::path pathMovie )
 	}
 
 	return qtime::MovieGl();
+}
+
+ImageSourceRef AreaController::_loadImage( fs::path pathImage )
+{
+	try
+	{
+		fs::path xmlPath( getAssetPath( pathImage ));
+		return loadImage( xmlPath );
+	}
+	catch( ... )
+	{
+		console() << "Unable to load the image: " << pathImage << std::endl;
+	}
+
+	return ImageSourceRef();
 }
 
 void AreaController::setRect( std::string name, Rectf &rect )

@@ -121,11 +121,14 @@ void TouchMovieApp::LoadXml( std::string xmlName )
 	{
 		XmlTree xmlBackground = doc.getChild( "Background" );
 
-		std::string strPath = xmlBackground.getAttributeValue<std::string>( "Path"        );
-		int         width   = xmlBackground.getAttributeValue<int>        ( "Width" , 800 );
-		int         height  = xmlBackground.getAttributeValue<int>        ( "Height", 600 );
+		std::string strPathImage = xmlBackground.getAttributeValue<std::string>( "PathImage", ""  );
+		std::string strPathMovie = xmlBackground.getAttributeValue<std::string>( "PathMovie", ""  );
+		int         width        = xmlBackground.getAttributeValue<int>        ( "Width"    , 800 );
+		int         height       = xmlBackground.getAttributeValue<int>        ( "Height"   , 600 );
 
-		mAreaController.setBackground( strPath, width, height );
+		mAreaController.setBackground     ( width, height );
+		mAreaController.setBackgroundImage( strPathImage  );
+		mAreaController.setBackgroundMovie( strPathMovie  );
 	}
 	if( doc.hasChild( "TouchMovie" ))
 	{
