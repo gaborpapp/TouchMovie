@@ -133,24 +133,24 @@ void TouchMovieApp::LoadXml( std::string xmlName )
 
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			std::string strName     = child->getAttributeValue<std::string>( "Name"         );
-			std::string strPathBack = child->getAttributeValue<std::string>( "PathBack"     );
-			std::string strPathFore = child->getAttributeValue<std::string>( "PathFore"     );
-			float       fadeIn      = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
-			float       fadeOut     = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
-			float       x1          = child->getAttributeValue<float>      ( "x1"     , 1.0 );
-			float       y1          = child->getAttributeValue<float>      ( "y1"     , 1.0 );
-			float       x2          = child->getAttributeValue<float>      ( "x2"     , 1.0 );
-			float       y2          = child->getAttributeValue<float>      ( "y2"     , 1.0 );
+			std::string strName       = child->getAttributeValue<std::string>( "Name"         );
+			std::string strPathIdle   = child->getAttributeValue<std::string>( "PathIdle"     );
+			std::string strPathActive = child->getAttributeValue<std::string>( "PathActive"   );
+			float       fadeIn        = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
+			float       fadeOut       = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
+			float       x1            = child->getAttributeValue<float>      ( "x1"     , 1.0 );
+			float       y1            = child->getAttributeValue<float>      ( "y1"     , 1.0 );
+			float       x2            = child->getAttributeValue<float>      ( "x2"     , 1.0 );
+			float       y2            = child->getAttributeValue<float>      ( "y2"     , 1.0 );
 
 			Rectf rect = Rectf( x1, y1, x2, y2 );
 
-			mAreaController.addArea     ( strName, rect        );
-			mAreaController.setMovieBack( strName, strPathBack );
-			mAreaController.setMovieFore( strName, strPathFore );
-			mAreaController.setDrawFrame( strName, drawFrame   );
-			mAreaController.setFadeIn   ( strName, fadeIn      );
-			mAreaController.setFadeOut  ( strName, fadeOut     );
+			mAreaController.addArea       ( strName, rect          );
+			mAreaController.setMovieIdle  ( strName, strPathIdle   );
+			mAreaController.setMovieActive( strName, strPathActive );
+			mAreaController.setDrawFrame  ( strName, drawFrame     );
+			mAreaController.setFadeIn     ( strName, fadeIn        );
+			mAreaController.setFadeOut    ( strName, fadeOut       );
 		}
 	}
 }

@@ -94,25 +94,25 @@ void AreaController::removeArea( std::string name )
 	}
 }
 
-void AreaController::setMovieBack( std::string name, fs::path pathMovie )
+void AreaController::setMovieIdle( std::string name, fs::path pathMovie )
 {
 	Area *pArea = _getArea( name );
 
 	if( pArea )
 	{
 		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
-		pArea->setMovieBack( movie );
+		pArea->setMovieIdle( movie );
 	}
 }
 
-void AreaController::setMovieFore( std::string name, fs::path pathMovie )
+void AreaController::setMovieActive( std::string name, fs::path pathMovie )
 {
 	Area *pArea = _getArea( name );
 
 	if( pArea )
 	{
 		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
-		pArea->setMovieFore( movie );
+		pArea->setMovieActive( movie );
 	}
 }
 

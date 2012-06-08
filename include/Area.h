@@ -11,10 +11,10 @@ class Area
 private:
 	enum State
 	{
-		AS_BACK,
-		AS_BACK_TO_FORE,
-		AS_FORE,
-		AS_FORE_TO_BACK
+		AS_IDLE,
+		AS_IDLE_TO_ACTIVE,
+		AS_ACTIVE,
+		AS_ACTIVE_TO_IDLE
 	};
 
 public:
@@ -26,13 +26,13 @@ public:
 
 	void setActive( bool active );
 
-	void              setMovieBack( ci::qtime::MovieGl &movie );
-	void              setMovieFore( ci::qtime::MovieGl &movie );
+	void              setMovieIdle( ci::qtime::MovieGl &movie );
+	void              setMovieActive( ci::qtime::MovieGl &movie );
 	const std::string getName() const;
-	void              setAlphaBack( const float Alpha );
-	const float       getAlphaBack() const;
-	void              setAlphaFore( const float Alpha );
-	const float       getAlphaFore() const;
+	void              setAlphaIdle( const float Alpha );
+	const float       getAlphaIdle() const;
+	void              setAlphaActive( const float Alpha );
+	const float       getAlphaActive() const;
 	void              setRect( const ci::Rectf &rect );
 	const ci::Rectf   getRect() const;
 	const ci::Rectf   getRectOrig() const;
@@ -52,8 +52,8 @@ private:
 	std::string      mName;
 	ci::Rectf        mRect;
 	ci::Rectf        mRectOrig;
-	Movie           *mpMovieBack;
-	Movie           *mpMovieFore;
+	Movie           *mpMovieIdle;
+	Movie           *mpMovieActive;
 
 	bool             mDrawFrame;
 	State            mState;

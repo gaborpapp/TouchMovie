@@ -14,47 +14,60 @@
 </Background>
 <TouchMovie>
   <Movie
-    Name     = "rollover_01"
-    PathBack = "bg01.mov"
-    PathFore = "rollover_01.mov"
-    FadeIn   = "0.5"
-    FadeOut  = "0.5"
-    x1       = "150"
-    y1       = "250"
-    x2       = "400"
-    y2       = "500">
+    Name       = "rollover_01"
+    PathIdle   = "Meditacio_LOOP_RGB_ALPHA_01.mov"
+    PathActive = "Meditacio_LOOP_RGB_ALPHA_02.mov"
+    FadeIn     = "3"
+    FadeOut    = "3"
+    x1         = "150"
+    y1         = "250"
+    x2         = "600"
+    y2         = "700">
+  </Movie>
+  <!--
+  <Movie
+    Name       = "rollover_01"
+    PathIdle   = "bg01.mov"
+    PathActive = "rollover_01.mov"
+    FadeIn     = "0.5"
+    FadeOut    = "0.5"
+    x1         = "150"
+    y1         = "250"
+    x2         = "400"
+    y2         = "500">
   </Movie>
   <Movie
-    Name     = "rollover_02"
-    PathBack = "bg01.mov"
-    PathFore = "rollover_01.mov"
-    FadeIn   = "1"
-    FadeOut  = "1"
-    x1       = "450"
-    y1       = "250"
-    x2       = "700"
-    y2       = "500">
+    Name       = "rollover_02"
+    PathIdle   = "bg01.mov"
+    PathActive = "rollover_01.mov"
+    FadeIn     = "1"
+    FadeOut    = "1"
+    x1         = "450"
+    y1         = "250"
+    x2         = "700"
+    y2         = "500">
   </Movie>
   <Movie
-    Name     = "rollover_03"
-    PathBack = "bg01.mov"
-    PathFore = "rollover_01.mov"
-    FadeIn   = "1.5"
-    FadeOut  = "1.5"
-    x1       = "750"
-    y1       = "250"
-    x2       = "1000"
-    y2       = "500">
+    Name       = "rollover_03"
+    PathIdle   = "bg01.mov"
+    PathActive = "rollover_01.mov"
+    FadeIn     = "1.5"
+    FadeOut    = "1.5"
+    x1         = "750"
+    y1         = "250"
+    x2         = "1000"
+    y2         = "500">
   </Movie>
   <Movie
-    Name     = "rollover_04"
-    PathBack = "bg01.mov"
-    PathFore = "rollover_01.mov"
-    FadeIn   = "2"
-    FadeOut  = "2"
-    x1       = "1050"
-    y1       = "250"
-    x2       = "1300"
-    y2       = "500">
+    Name       = "rollover_04"
+    PathIdle   = "bg01.mov"
+    PathActive = "rollover_01.mov"
+    FadeIn     = "2"
+    FadeOut    = "2"
+    x1         = "1050"
+    y1         = "250"
+    x2         = "1300"
+    y2         = "500">
   </Movie>
+-->
 </TouchMovie>

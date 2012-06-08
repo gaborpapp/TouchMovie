@@ -19,8 +19,8 @@ public:
 
 	void addArea( std::string name, ci::Rectf &rect );
 	void removeArea( std::string name );
-	void setMovieBack( std::string name, ci::fs::path pathMovie );
-	void setMovieFore( std::string name, ci::fs::path pathMovie );
+	void setMovieIdle( std::string name, ci::fs::path pathMovie );
+	void setMovieActive( std::string name, ci::fs::path pathMovie );
 	void setRect( std::string name, ci::Rectf &rect );
 
 	void setDrawFrame( std::string name, bool drawFrame );

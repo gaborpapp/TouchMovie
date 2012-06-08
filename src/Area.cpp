@@ -11,39 +11,39 @@ Area::Area( std::string name, Rectf &rect )
 : mName( name )
 , mRect( rect )
 , mRectOrig( rect )
-, mpMovieBack( 0 )
-, mpMovieFore( 0 )
+, mpMovieIdle( 0 )
+, mpMovieActive( 0 )
 , mFadeIn( 1.0f )
 , mFadeOut( 1.0f )
 , mDrawFrame( false )
-, mState( AS_BACK )
+, mState( AS_IDLE )
 {
 }
 
 Area::~Area()
 {
-	if( mpMovieBack )
-		delete mpMovieBack;
-	if( mpMovieFore )
-		delete mpMovieFore;
+	if( mpMovieIdle )
+		delete mpMovieIdle;
+	if( mpMovieActive )
+		delete mpMovieActive;
 }
 
 void Area::update()
 {
 	_changeAlpha();
 
-	if( mpMovieBack )
-		mpMovieBack->update();
-	if( mpMovieFore )
-		mpMovieFore->update();
+	if( mpMovieIdle )
+		mpMovieIdle->update();
+	if( mpMovieActive )
+		mpMovieActive->update();
 }
 
 void Area::draw()
 {
-	if( mpMovieBack )
-		mpMovieBack->draw();
-	if( mpMovieFore )
-		mpMovieFore->draw();
+	if( mpMovieIdle )
+		mpMovieIdle->draw();
+	if( mpMovieActive )
+		mpMovieActive->draw();
 
 	if( mDrawFrame )
 	{
@@ -56,45 +56,54 @@ void Area::setActive( bool active )
 {
 	switch( mState )
 	{
-	case AS_BACK         :
-	case AS_FORE_TO_BACK :
+	case AS_IDLE           :
 		if( active )
-			mState = AS_BACK_TO_FORE;
+		{
+			// immediate change
+			setAlphaActive( 1.0f );
+			setAlphaIdle  ( 0.0f );
+			mState = AS_ACTIVE;
+		}
+		return;
+		break;
+	case AS_ACTIVE_TO_IDLE :
+		if( active )
+			mState = AS_IDLE_TO_ACTIVE;
 		else
 			return;
 		break;
-	case AS_FORE         :
-	case AS_BACK_TO_FORE :
+	case AS_ACTIVE         :
+	case AS_IDLE_TO_ACTIVE :
 		if( active )
 			return;
 		else
-			mState = AS_FORE_TO_BACK;
+			mState = AS_ACTIVE_TO_IDLE;
 		break;
 	}
 
 	mLastTime = ci::app::getElapsedSeconds();
 }
 
-void Area::setMovieBack( qtime::MovieGl &movie )
+void Area::setMovieIdle( qtime::MovieGl &movie )
 {
-	if( mpMovieBack )
-		delete mpMovieBack;
+	if( mpMovieIdle )
+		delete mpMovieIdle;
 
-	mpMovieBack = new Movie( movie, mRect );
+	mpMovieIdle = new Movie( movie, mRect );
 
-	mpMovieBack->setAlpha( 1.0f );
-	mpMovieBack->play( true );
+	mpMovieIdle->setAlpha( 1.0f );
+	mpMovieIdle->play( true );
 }
 
-void Area::setMovieFore( qtime::MovieGl &movie )
+void Area::setMovieActive( qtime::MovieGl &movie )
 {
-	if( mpMovieFore )
-		delete mpMovieFore;
+	if( mpMovieActive )
+		delete mpMovieActive;
 
-	mpMovieFore = new Movie( movie, mRect );
+	mpMovieActive = new Movie( movie, mRect );
 
-	mpMovieFore->setAlpha( 0.0f );
-	mpMovieFore->stop();
+	mpMovieActive->setAlpha( 0.0f );
+	mpMovieActive->stop();
 }
 
 const std::string Area::getName() const
@@ -102,60 +111,60 @@ const std::string Area::getName() const
 	return mName;
 }
 
-void Area::setAlphaBack( const float alpha )
+void Area::setAlphaIdle( const float alpha )
 {
-	if( mpMovieBack )
+	if( mpMovieIdle )
 	{
-		mpMovieBack->setAlpha( alpha );
+		mpMovieIdle->setAlpha( alpha );
 
 		if( alpha > 0 )
 		{
-			if( ! mpMovieBack->isPlaying())
-				mpMovieBack->play( true );
+			if( ! mpMovieIdle->isPlaying())
+				mpMovieIdle->play( true );
 		}
 		else
 		{
-			mpMovieBack->stop();
-			mState = AS_FORE;
+			mpMovieIdle->stop();
+			mState = AS_ACTIVE;
 		}
 	}
 }
 
-const float Area::getAlphaBack() const
+const float Area::getAlphaIdle() const
 {
-	if( mpMovieBack )
-		return mpMovieBack->getAlpha();
+	if( mpMovieIdle )
+		return mpMovieIdle->getAlpha();
 
 	return 0;
 }
 
-void Area::setAlphaFore( const float alpha )
+void Area::setAlphaActive( const float alpha )
 {
-	if( mpMovieFore )
+	if( mpMovieActive )
 	{
-		mpMovieFore->setAlpha( alpha );
+		mpMovieActive->setAlpha( alpha );
 
 		if( alpha > 0 )
 		{
-			if( ! mpMovieFore->isPlaying())
+			if( ! mpMovieActive->isPlaying())
 			{
-				float time = mpMovieBack->getCurrentTime();
-				mpMovieFore->setCurrentTime( time );
-				mpMovieFore->play( false );
+				float time = mpMovieIdle->getCurrentTime();
+				mpMovieActive->setCurrentTime( time );
+				mpMovieActive->play( false );
 			}
 		}
 		else
 		{
-			mpMovieFore->stop();
-			mState = AS_BACK;
+			mpMovieActive->stop();
+			mState = AS_IDLE;
 		}
 	}
 }
 
-const float Area::getAlphaFore() const
+const float Area::getAlphaActive() const
 {
-	if( mpMovieFore )
-		return mpMovieFore->getAlpha();
+	if( mpMovieActive )
+		return mpMovieActive->getAlpha();
 
 	return 0;
 }
@@ -164,10 +173,10 @@ void Area::setRect( const Rectf &rect )
 {
 	mRect = rect;
 
-	if( mpMovieBack )
-		mpMovieBack->setRect( rect );
-	if( mpMovieFore )
-		mpMovieFore->setRect( rect );
+	if( mpMovieIdle )
+		mpMovieIdle->setRect( rect );
+	if( mpMovieActive )
+		mpMovieActive->setRect( rect );
 }
 
 const Rectf Area::getRect() const
@@ -216,10 +225,10 @@ void Area::_changeAlpha()
 
 	switch( mState )
 	{
-	case AS_FORE         : return;
-	case AS_BACK         : return;
-	case AS_BACK_TO_FORE : fadeAct = mFadeIn;   break;
-	case AS_FORE_TO_BACK : fadeAct = -mFadeOut; break;
+	case AS_ACTIVE         : return;
+	case AS_IDLE           : return;
+	case AS_IDLE_TO_ACTIVE : fadeAct = mFadeIn;   break;
+	case AS_ACTIVE_TO_IDLE : fadeAct = -mFadeOut; break;
 	}
 
 	double actTime = ci::app::getElapsedSeconds();
@@ -227,8 +236,8 @@ void Area::_changeAlpha()
 
 	mLastTime = actTime;
 
-	setAlphaFore( getAlphaFore() + (float)alphaChange );
-	setAlphaBack( getAlphaBack() - (float)alphaChange );
+	setAlphaActive( getAlphaActive() + (float)alphaChange );
+	setAlphaIdle  ( getAlphaIdle()   - (float)alphaChange );
 }
 
 } // namespace TouchMovie
