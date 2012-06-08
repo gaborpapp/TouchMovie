@@ -2,9 +2,6 @@
 #include "cinder/Xml.h"
 #include "PParams.h"
 
-#define USE_KINECT        1
-#define USE_KINECT_RECORD 0
-
 #include "AreaController.h"
 #include "Area.h"
 #include "Background.h"

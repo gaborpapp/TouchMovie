@@ -10,9 +10,9 @@
 
 #include "Resources.h"
 
-#if USE_KINECT == 1
-
 #include "KinectUser.h"
+
+#if USE_KINECT == 1
 
 using namespace std;
 using namespace ci;

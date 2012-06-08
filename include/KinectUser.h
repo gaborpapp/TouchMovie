@@ -8,6 +8,9 @@
 
 #include "PParams.h"
 
+#define USE_KINECT        1
+#define USE_KINECT_RECORD 0
+
 #if USE_KINECT == 1
 
 #include "CiNI.h"
