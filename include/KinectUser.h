@@ -67,3 +67,4 @@ class KinectUser
 } // namespace TouchMovie
 
 #endif /* USE_KINECT */
+

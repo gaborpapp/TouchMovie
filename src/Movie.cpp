@@ -1,10 +1,15 @@
-#include "Movie.h"
+#include "cinder/app/App.h"
 #include "cinder/CinderMath.h"
+
+#include "Resources.h"
+#include "Movie.h"
 
 using namespace ci;
 
 namespace TouchMovie
 {
+
+ci::gl::GlslProg Movie::sShader;
 
 Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 : mMovie( movie )
@@ -15,6 +20,12 @@ Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 	mMovie.seekToStart();
 	mMovie.setLoop();
 	mMovie.stop();
+
+	if ( !sShader )
+	{
+		sShader = gl::GlslProg( app::loadResource( RES_MOVIE_VERT ),
+				app::loadResource( RES_MOVIE_FRAG ) );
+	}
 }
 
 void Movie::update()
@@ -34,16 +45,20 @@ void Movie::draw()
 	{
 		Rectf rect = mRect;
 
-		if( mRect.getX1() == -1 
-		 && mRect.getY1() == -1 
-		 && mRect.getX2() == -1 
+		if( mRect.getX1() == -1
+		 && mRect.getY1() == -1
+		 && mRect.getX2() == -1
 		 && mRect.getY2() == -1 )
 		{
 			rect = Rectf( mFrame.getBounds());
 		}
 
+		sShader.bind();
+		sShader.uniform( "tex", 0 );
+		sShader.uniform( "size", static_cast< Vec2f >( mFrame.getSize() ) );
 		gl::color( ColorA( 1.0f, 1.0f, 1.0f, mAlpha )); // red, green, blue, alpha
 		gl::draw( mFrame, mRect );
+		sShader.unbind();
 	}
 
 	gl::disableAlphaBlending();

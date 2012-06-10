@@ -1,6 +1,7 @@
 #pragma once
 #include "cinder/gl/Texture.h"
 #include "cinder/qtime/QuickTime.h"
+#include "cinder/gl/GlslProg.h"
 #include "Area.h"
 
 namespace TouchMovie
@@ -31,6 +32,8 @@ private:
 
 	ci::gl::Texture    mFrame;
 	float              mAlpha;
+
+	static ci::gl::GlslProg sShader;
 };
 
 } // namespace TouchMovie
