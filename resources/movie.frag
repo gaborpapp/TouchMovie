@@ -9,6 +9,6 @@ void main()
 	vec2 auv = vec2( size.x / 2. + cuv.s, uv.t );
 	vec4 color = texture2DRect( tex, cuv );
 	color.a = texture2DRect( tex, auv ).r;
-	gl_FragColor = color;
+	gl_FragColor = gl_Color * color;
 }
 
