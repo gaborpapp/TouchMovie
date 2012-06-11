@@ -68,6 +68,9 @@
       <TargetMachine>MachineX86</TargetMachine>
       <IgnoreSpecificDefaultLibraries>msvcrtd</IgnoreSpecificDefaultLibraries>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\include;$(CINDER_NI_DIR)\include;$(CINDER_DIR)\include;$(BOOST_DIR);$(OPEN_NI_INCLUDE);$(CINDER_DIR)\blocks\opencv\include;$(CINDER_DIR)\src\AntTweakBar;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -91,6 +94,9 @@
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
     </Link>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>..\include;$(CINDER_NI_DIR)\include;$(CINDER_DIR)\include;$(BOOST_DIR);$(OPEN_NI_INCLUDE);$(CINDER_DIR)\blocks\opencv\include;$(CINDER_DIR)\src\AntTweakBar;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\cinder-ni\src\CiNI.cpp" />
@@ -113,11 +119,15 @@
     <ClInclude Include="..\include\KinectUser.h" />
     <ClInclude Include="..\include\Movie.h" />
     <ClInclude Include="..\include\PParams.h" />
+    <ClInclude Include="..\include\Resources.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\assets\data.xml">
       <SubType>Designer</SubType>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="..\resources\Resource.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

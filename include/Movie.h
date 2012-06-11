@@ -4,6 +4,8 @@
 #include "cinder/gl/GlslProg.h"
 #include "Area.h"
 
+#define USE_SHADER 0
+
 namespace TouchMovie
 {
 
@@ -33,7 +35,9 @@ private:
 	ci::gl::Texture    mFrame;
 	float              mAlpha;
 
+#if USE_SHADER == 1
 	static ci::gl::GlslProg sShader;
+#endif
 };
 
 } // namespace TouchMovie

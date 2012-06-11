@@ -9,7 +9,9 @@ using namespace ci;
 namespace TouchMovie
 {
 
+#if USE_SHADER == 1
 ci::gl::GlslProg Movie::sShader;
+#endif
 
 Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 : mMovie( movie )
@@ -20,12 +22,13 @@ Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 	mMovie.seekToStart();
 	mMovie.setLoop();
 	mMovie.stop();
-
+#if USE_SHADER == 1
 	if ( !sShader )
 	{
 		sShader = gl::GlslProg( app::loadResource( RES_MOVIE_VERT ),
 				app::loadResource( RES_MOVIE_FRAG ) );
 	}
+#endif
 }
 
 void Movie::update()
@@ -53,12 +56,16 @@ void Movie::draw()
 			rect = Rectf( mFrame.getBounds());
 		}
 
+#if USE_SHADER == 1
 		sShader.bind();
 		sShader.uniform( "tex", 0 );
 		sShader.uniform( "size", static_cast< Vec2f >( mFrame.getSize() ) );
+#endif
 		gl::color( ColorA( 1.0f, 1.0f, 1.0f, mAlpha )); // red, green, blue, alpha
 		gl::draw( mFrame, mRect );
+#if USE_SHADER == 1
 		sShader.unbind();
+#endif
 	}
 
 	gl::disableAlphaBlending();
