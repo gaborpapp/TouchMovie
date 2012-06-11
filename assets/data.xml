@@ -19,10 +19,10 @@
     PathActive = "meditation_active.mov"
     FadeIn     = "3"
     FadeOut    = "3"
-    x1         = "50"
-    y1         = "50"
-    x2         = "700"
-    y2         = "700">
+    x          = "50"
+    y          = "50"
+    width      = "650"
+    height     = "650">
   </Movie>
   <Movie
     Name       = "meditation 2"
@@ -30,10 +30,10 @@
     PathActive = "meditation_active.mov"
     FadeIn     = "3"
     FadeOut    = "3"
-    x1         = "1000"
-    y1         = "50"
-    x2         = "1250"
-    y2         = "300">
+    x          = "1000"
+    y          = "50"
+    width      = "250"
+    height     = "250">
   </Movie>
   <Movie
     Name       = "meditation 3"
@@ -41,10 +41,10 @@
     PathActive = "meditation_active.mov"
     FadeIn     = "3"
     FadeOut    = "3"
-    x1         = "1000"
-    y1         = "400"
-    x2         = "1250"
-    y2         = "650">
+    x          = "1000"
+    y          = "400"
+    width      = "250"
+    height     = "250">
   </Movie>
 </TouchMovie>
 
