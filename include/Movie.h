@@ -4,7 +4,7 @@
 #include "cinder/gl/GlslProg.h"
 #include "Area.h"
 
-#define USE_SHADER 0
+#define USE_SHADER 1
 
 namespace TouchMovie
 {

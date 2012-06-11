@@ -86,6 +86,7 @@ void Movie::play( bool fromStart )
 void Movie::stop()
 {
 	mMovie.stop();
+	mFrame.reset();
 }
 
 float Movie::getCurrentTime()
