@@ -10,7 +10,6 @@ namespace TouchMovie
 
 AreaController::AreaController()
 : mpBackground( 0 )
-, mpAreaMouse( 0 )
 {
 }
 
@@ -44,7 +43,8 @@ void AreaController::draw()
 
 void AreaController::mouseMove( MouseEvent event )
 {
-	mpAreaMouse = _getArea( event.getPos());
+	mAreasActMouse.clear();
+	_actionArea( event.getPos(), _setMousePosAction );
 }
 
 void AreaController::mouseDown( MouseEvent event )
@@ -255,14 +255,12 @@ void AreaController::resize()
 
 void AreaController::setTouchPosBeg()
 {
+	mAreasActTouch.clear();
 }
 
 void AreaController::setTouchPos( ci::Vec2f pos )
 {
-	Area *pArea = _getArea( pos );
-
-	if( pArea )
-		mAreasAct.push_back( pArea );
+	_actionArea( pos, _setTouchPosAction );
 }
 
 void AreaController::setTouchPosEnd()
@@ -278,8 +276,6 @@ void AreaController::setTouchPosEnd()
 			(*p)->setActive( false );
 		}
 	}
-
-	mAreasAct.clear();
 }
 
 Area *AreaController::_getArea( std::string name )
@@ -310,10 +306,15 @@ Area *AreaController::_getArea( const Vec2i &pos )
 
 bool AreaController::_isAreaAct( Area *pArea )
 {
-	if( pArea == mpAreaMouse )
-		return true;
+	for( std::vector<Area*>::iterator p = mAreasActMouse.begin(); p != mAreasActMouse.end(); ++p )
+	{
+		if((*p) == pArea )
+		{
+			return true;
+		}
+	}
 
-	for( std::vector<Area*>::iterator p = mAreasAct.begin(); p != mAreasAct.end(); ++p )
+	for( std::vector<Area*>::iterator p = mAreasActTouch.begin(); p != mAreasActTouch.end(); ++p )
 	{
 		if((*p) == pArea )
 		{
@@ -322,6 +323,29 @@ bool AreaController::_isAreaAct( Area *pArea )
 	}
 
 	return false;
+}
+
+void AreaController::_actionArea( const ci::Vec2i &pos, ActionFunc pActionFunc )
+{
+	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
+	{
+		if((*p)->getRect().contains( pos ))
+		{
+			pActionFunc( *p, this );
+		}
+	}
+}
+
+void AreaController::_setTouchPosAction( Area *pArea, void *pvData )
+{
+	AreaController *pAreaController = (AreaController*)pvData;
+	pAreaController->mAreasActTouch.push_back( pArea );
+}
+
+void AreaController::_setMousePosAction( Area *pArea, void *pvData )
+{
+	AreaController *pAreaController = (AreaController*)pvData;
+	pAreaController->mAreasActMouse.push_back( pArea );
 }
 
 } // namespace TouchMovie

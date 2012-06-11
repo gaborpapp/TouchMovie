@@ -9,6 +9,8 @@ namespace TouchMovie
 class AreaController
 {
 public:
+	typedef void (*ActionFunc)( Area *pArea, void *pvData );
+
 	AreaController();
 	~AreaController();
 	void update();
@@ -45,15 +47,20 @@ public:
 private:
 	Area  *_getArea( std::string name );
 	Area  *_getArea( const ci::Vec2i &pos );
+	void   _actionArea( const ci::Vec2i &pos, ActionFunc pActionFunc );
 	bool   _isAreaAct ( Area *pArea );
+
+	static void _setTouchPosAction( Area *pArea, void *pvData );
+	static void _setMousePosAction( Area *pArea, void *pvData );
+
 	ci::qtime::MovieGl _loadMovie( ci::fs::path pathMovie );
 	ci::ImageSourceRef _loadImage( ci::fs::path pathImage );
 
 private:
 	Background         *mpBackground;
-	Area               *mpAreaMouse;
 	std::vector<Area*>  mAreas;
-	std::vector<Area*>  mAreasAct;
+	std::vector<Area*>  mAreasActMouse;
+	std::vector<Area*>  mAreasActTouch;
 };
 
 } // namespace TouchMovie
