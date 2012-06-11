@@ -138,12 +138,12 @@ void TouchMovieApp::LoadXml( std::string xmlName )
 			std::string strPathActive = child->getAttributeValue<std::string>( "PathActive"   );
 			float       fadeIn        = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
 			float       fadeOut       = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
-			float       x1            = child->getAttributeValue<float>      ( "x1"     , 1.0 );
-			float       y1            = child->getAttributeValue<float>      ( "y1"     , 1.0 );
-			float       x2            = child->getAttributeValue<float>      ( "x2"     , 1.0 );
-			float       y2            = child->getAttributeValue<float>      ( "y2"     , 1.0 );
+			float       x             = child->getAttributeValue<float>      ( "x"      , 1.0 );
+			float       y             = child->getAttributeValue<float>      ( "y"      , 1.0 );
+			float       width         = child->getAttributeValue<float>      ( "width"  , 1.0 );
+			float       height        = child->getAttributeValue<float>      ( "height" , 1.0 );
 
-			Rectf rect = Rectf( x1, y1, x2, y2 );
+			Rectf rect = Rectf( x, y, x + width, y + height );
 
 			mAreaController.addArea       ( strName, rect          );
 			mAreaController.setMovieIdle  ( strName, strPathIdle   );
