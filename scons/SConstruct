@@ -2,8 +2,12 @@ TARGET = 'TouchMovieApp'
 
 SOURCES = ['TouchMovieApp.cpp', 'Area.cpp', 'AreaController.cpp',
 		'Background.cpp', 'Movie.cpp', 'PParams.cpp', 'KinectUser.cpp']
-ASSETS = ['data.xml', 'meditation_idle.mov', 'meditation_active.mov',
-		'repul_idle.mov', 'repul_active.mov']
+ASSETS = ['data.xml',
+		'meditation_idle.mov', 'meditation_active.mov', 'meditation_active.mp3',
+		'repul_idle.mov', 'repul_active.mov', 'repul_active.mp3',
+		'demon_idle.mov', 'demon_active.mov', 'demon_active.mp3',
+		'tancos_idle.mov', 'tancos_active.mov', 'tancos_active.mp3']
+
 RESOURCES = ['line.vert', 'line.frag', 'line.geom',
 		'movie.vert', 'movie.frag']
 
