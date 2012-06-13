@@ -260,6 +260,15 @@ void KinectUser::setBounds( const Rectf &rect )
 	mOutputMapping = RectMapping( kRect, dRect, true );
 }
 
+void KinectUser::showParams( bool show )
+{
+	if( show )
+		TwDefine( "Kinect visible=true" );
+	else
+		TwDefine( "Kinect visible=false" );
+}
+
+
 } // namespace TouchMovie
 
 #endif /* USE_KINECT */

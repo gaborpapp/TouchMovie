@@ -32,6 +32,8 @@ class KinectUser
 
 		void setBounds( const ci::Rectf &rect );
 
+		void showParams( bool show );
+
 	protected:
 		mndl::ni::OpenNI mNI;
 		mndl::ni::UserTracker mNIUserTracker;

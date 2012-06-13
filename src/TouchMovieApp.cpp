@@ -27,6 +27,7 @@ public:
 
 private:
 	void loadXml( std::string xmlName );
+	void showParams( bool show );
 
 	AreaController      mAreaController;
 	int                 mWidth;
@@ -35,6 +36,7 @@ private:
 
 	params::PInterfaceGl mParams;
 	float                mFPS;
+	bool                 mShowParams;
 
 #if USE_KINECT == 1
 	KinectUser          mKinectUser;
@@ -71,8 +73,10 @@ void TouchMovieApp::setup()
 	mParams.addText( "Touch Movie" );
 	mParams.addParam( "FPS" , &mFPS, "", true );
 
-	TwDefine( "TouchMovie iconified=true" );
 	TwDefine( "TW_HELP visible=false" );
+	TwDefine( "TouchMovie iconified=true" );
+
+	mShowParams = true;
 
 #if USE_KINECT == 1
 	try
@@ -180,6 +184,20 @@ void TouchMovieApp::keyDown( KeyEvent event )
 	else if( event.getCode() == 'f' )
 	{
 		setFullScreen( ! isFullScreen());
+		if( ! isFullScreen())
+			showCursor();
+	}
+	else if( event.getCode() == 's' )
+	{
+		mShowParams = ! mShowParams;
+		showParams( mShowParams );
+		if( isFullScreen())
+		{
+			if( mShowParams )
+				showCursor( );
+			else
+				hideCursor();
+		}
 	}
 }
 
@@ -242,6 +260,18 @@ void TouchMovieApp::draw()
 	gl::setViewport( getWindowBounds());
 
 	params::PInterfaceGl::draw();
+}
+
+void TouchMovieApp::showParams( bool show )
+{
+	if( show )
+		TwDefine( "TouchMovie visible=true" );
+	else
+		TwDefine( "TouchMovie visible=false" );
+
+#if USE_KINECT == 1
+	mKinectUser.showParams( show );
+#endif /* USE_KINECT */
 }
 
 CINDER_APP_BASIC( TouchMovieApp, RendererGl(0) );
