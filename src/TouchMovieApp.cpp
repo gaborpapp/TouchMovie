@@ -81,10 +81,6 @@ void TouchMovieApp::setup()
 	TwDefine( "TW_HELP visible=false" );
 	TwDefine( "TouchMovie iconified=true" );
 
-	if( mFullScreen )
-		hideCursor();
-	showParams( mShowParams );
-
 #if USE_KINECT == 1
 	try
 	{
@@ -108,6 +104,10 @@ void TouchMovieApp::setup()
 		quit();
 	}
 #endif /* USE_KINECT */
+
+	if( mFullScreen )
+		hideCursor();
+	showParams( mShowParams );
 }
 
 void TouchMovieApp::shutdown()
