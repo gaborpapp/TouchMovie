@@ -109,6 +109,22 @@ void Area::setMovieActive( qtime::MovieGl &movie )
 	mpMovieActive->stop();
 }
 
+void Area::setAudioIdle( audio::SourceRef &audio )
+{
+	if( ! mpMovieIdle )
+		return;
+
+	mpMovieIdle->setAudio( audio );
+}
+
+void Area::setAudioActive( audio::SourceRef &audio )
+{
+	if( ! mpMovieActive )
+		return;
+
+	mpMovieActive->setAudio( audio );
+}
+
 const std::string Area::getName() const
 {
 	return mName;

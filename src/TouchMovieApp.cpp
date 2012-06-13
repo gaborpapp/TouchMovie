@@ -158,26 +158,28 @@ void TouchMovieApp::loadXml( std::string xmlName )
 
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			std::string strName        = child->getAttributeValue<std::string>( "Name"              );
-			std::string strPathIdle    = child->getAttributeValue<std::string>( "PathIdle"          );
-			std::string strPathActive  = child->getAttributeValue<std::string>( "PathActive"        );
-			float       fadeIn         = child->getAttributeValue<float>      ( "FadeIn"      , 1.0 );
-			float       fadeOut        = child->getAttributeValue<float>      ( "FadeOut"     , 1.0 );
-			float       x              = child->getAttributeValue<float>      ( "x"           , 1.0 );
-			float       y              = child->getAttributeValue<float>      ( "y"           , 1.0 );
-			float       width          = child->getAttributeValue<float>      ( "width"       , 1.0 );
-			float       height         = child->getAttributeValue<float>      ( "height"      , 1.0 );
-			bool        useAlphaShader = child->getAttributeValue<bool>       ( "AlphaShader" , 1.0 );
+			std::string strName            = child->getAttributeValue<std::string>( "Name"              );
+			std::string strPathIdle        = child->getAttributeValue<std::string>( "PathIdle"          );
+			std::string strPathActive      = child->getAttributeValue<std::string>( "PathActive"        );
+			std::string strPathActiveAudio = child->getAttributeValue<std::string>( "PathActiveAudio"   );
+			float       fadeIn             = child->getAttributeValue<float>      ( "FadeIn"      , 1.0 );
+			float       fadeOut            = child->getAttributeValue<float>      ( "FadeOut"     , 1.0 );
+			float       x                  = child->getAttributeValue<float>      ( "x"           , 1.0 );
+			float       y                  = child->getAttributeValue<float>      ( "y"           , 1.0 );
+			float       width              = child->getAttributeValue<float>      ( "width"       , 1.0 );
+			float       height             = child->getAttributeValue<float>      ( "height"      , 1.0 );
+			bool        useAlphaShader     = child->getAttributeValue<bool>       ( "AlphaShader" , 1.0 );
 
 			Rectf rect = Rectf( x, y, x + width, y + height );
 
-			mAreaController.addArea          ( strName, rect           );
-			mAreaController.setMovieIdle     ( strName, strPathIdle    );
-			mAreaController.setMovieActive   ( strName, strPathActive  );
-			mAreaController.setDrawFrame     ( strName, mDrawFrame     );
-			mAreaController.setFadeIn        ( strName, fadeIn         );
-			mAreaController.setFadeOut       ( strName, fadeOut        );
-			mAreaController.setUseAlphaShader( strName, useAlphaShader );
+			mAreaController.addArea          ( strName, rect               );
+			mAreaController.setMovieIdle     ( strName, strPathIdle        );
+			mAreaController.setMovieActive   ( strName, strPathActive      );
+//			mAreaController.setAudioActive   ( strName, strPathActiveAudio );
+			mAreaController.setDrawFrame     ( strName, mDrawFrame         );
+			mAreaController.setFadeIn        ( strName, fadeIn             );
+			mAreaController.setFadeOut       ( strName, fadeOut            );
+			mAreaController.setUseAlphaShader( strName, useAlphaShader     );
 		}
 	}
 }

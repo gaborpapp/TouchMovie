@@ -35,6 +35,11 @@ void Movie::update()
 		mMovie.setVolume( mAlpha );
 		mFrame = mMovie.getTexture();
 	}
+
+	if( mTrack && mTrack->isPlaying())
+	{
+		mTrack->setVolume( mAlpha );
+	}
 }
 
 void Movie::draw()
@@ -71,6 +76,13 @@ void Movie::draw()
 	gl::disableAlphaBlending();
 }
 
+void Movie::setAudio( audio::SourceRef &audio )
+{
+	mAudio = audio;
+//	audio::Output::play( mAudio );
+	mTrack = audio::Output::addTrack( mAudio );
+}
+
 bool Movie::isPlaying()
 {
 	return mMovie.isPlaying();
@@ -81,12 +93,22 @@ void Movie::play( bool fromStart )
 	if( fromStart )
 		mMovie.seekToStart();
 	mMovie.play();
+
+	if( mTrack )
+	{
+		if( fromStart )
+			mTrack->setTime( 0 );
+		mTrack->play();
+	}
 }
 
 void Movie::stop()
 {
 	mMovie.stop();
 	mFrame.reset();
+
+	if( mTrack )
+		mTrack->stop();
 }
 
 float Movie::getCurrentTime()
@@ -97,6 +119,9 @@ float Movie::getCurrentTime()
 void Movie::setCurrentTime( float time )
 {
 	mMovie.seekToTime( time );
+
+	if( mTrack )
+		mTrack->setTime( time );
 }
 
 void Movie::setAlpha( const float alpha )

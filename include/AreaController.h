@@ -23,6 +23,8 @@ public:
 	void removeArea( std::string areaName );
 	void setMovieIdle( std::string areaName, std::string movieName );
 	void setMovieActive( std::string areaName, std::string movieName );
+	void setAudioIdle( std::string areaName, std::string audioName );
+	void setAudioActive( std::string areaName, std::string audioName );
 	void setRect( std::string areaName, ci::Rectf &rect );
 
 	void setDrawFrame( std::string areaName, bool drawFrame );
@@ -56,8 +58,9 @@ private:
 	static void _setTouchPosAction( Area *pArea, void *pvData );
 	static void _setMousePosAction( Area *pArea, void *pvData );
 
-	ci::ImageSourceRef _loadImage( std::string strImageName );
-	ci::qtime::MovieGl _loadMovie( std::string strMovieName );
+	ci::qtime::MovieGl   _loadMovie( std::string strMovieName );
+	ci::ImageSourceRef   _loadImage( std::string strImageName );
+	ci::audio::SourceRef _loadAudio( std::string strAudioName );
 
 private:
 	Background         *mpBackground;

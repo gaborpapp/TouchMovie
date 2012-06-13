@@ -1,5 +1,6 @@
 #include "cinder/app/App.h"
 #include "cinder/ImageIo.h"
+#include "cinder/Audio/Io.h"
 #include "AreaController.h"
 
 using namespace ci;
@@ -131,6 +132,30 @@ void AreaController::setMovieActive( std::string areaName, std::string movieName
 	}
 }
 
+void AreaController::setAudioIdle( std::string areaName, std::string audioName )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+	{
+		ci::audio::SourceRef audio = _loadAudio( audioName );
+		if( audio )
+			pArea->setAudioIdle( audio );
+	}
+}
+
+void AreaController::setAudioActive( std::string areaName, std::string audioName )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+	{
+		ci::audio::SourceRef audio = _loadAudio( audioName );
+		if( audio )
+			pArea->setAudioActive( audio );
+	}
+}
+
 qtime::MovieGl AreaController::_loadMovie( std::string strMovieName )
 {
 	try
@@ -170,6 +195,21 @@ ImageSourceRef AreaController::_loadImage( std::string strImageName )
 	}
 
 	return ImageSourceRef();
+}
+
+audio::SourceRef AreaController::_loadAudio( std::string strAudioName )
+{
+	try
+	{
+		fs::path xmlPath( getAssetPath( strAudioName ));
+		return audio::load( xmlPath.string());
+	}
+	catch( ... )
+	{
+		console() << "Unable to load the audio: " << strAudioName << std::endl;
+	}
+
+	return audio::SourceRef();
 }
 
 void AreaController::setRect( std::string areaName, Rectf &rect )

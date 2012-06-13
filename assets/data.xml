@@ -14,28 +14,30 @@
 </Background>
 <TouchMovie>
   <Movie
-    Name        = "meditation"
-    PathIdle    = "meditation_idle.mov"
-    PathActive  = "meditation_active.mov"
-    FadeIn      = "3"
-    FadeOut     = "3"
-    x           = "329.3"
-    y           = "190.8"
-    width       = "200"
-    height      = "200"
-    AlphaShader = "0" >
+    Name            = "meditation"
+    PathIdle        = "meditation_idle.mov"
+    PathActive      = "meditation_active.mov"
+    PathActiveAudio = "meditation.wav"
+    FadeIn          = "1"
+    FadeOut         = "1"
+    x               = "329.3"
+    y               = "190.8"
+    width           = "200"
+    height          = "200"
+    AlphaShader     = "0" >
   </Movie>
   <Movie
-    Name        = "repul"
-    PathIdle    = "repul_idle.mov"
-    PathActive  = "repul_active.mov"
-    FadeIn      = "3"
-    FadeOut     = "3"
-    x           = "1104"
-    y           = "38"
-    width       = "200"
-    height      = "500"
-    AlphaShader = "0" >
+    Name            = "repul"
+    PathIdle        = "repul_idle.mov"
+    PathActive      = "repul_active.mov"
+    PathActiveAudio = ""
+    FadeIn          = "3"
+    FadeOut         = "3"
+    x               = "1104"
+    y               = "38"
+    width           = "200"
+    height          = "500"
+    AlphaShader     = "0" >
   </Movie>
 </TouchMovie>
 

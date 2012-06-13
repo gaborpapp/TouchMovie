@@ -1,6 +1,8 @@
 #pragma once
 #include "cinder/gl/Texture.h"
 #include "cinder/qtime/QuickTime.h"
+#include "cinder/Audio/Io.h"
+#include "cinder/Audio/Output.h"
 #include "cinder/gl/GlslProg.h"
 #include "Area.h"
 
@@ -14,6 +16,8 @@ public:
 
 	void update();
 	void draw();
+
+	void              setAudio( ci::audio::SourceRef &audio );
 
 	bool              isPlaying();
 	void              play( bool fromStart );
@@ -30,12 +34,15 @@ public:
 	void              setUseAlphaShader( bool useAlphaShader );
 
 private:
-	ci::qtime::MovieGl mMovie;
-	ci::Rectf          mRect;
+	ci::qtime::MovieGl    mMovie;
+	ci::Rectf             mRect;
 
-	ci::gl::Texture    mFrame;
-	float              mAlpha;
-	bool               mUseAlphaShader;
+	ci::audio::SourceRef  mAudio;
+	ci::audio::TrackRef   mTrack;
+
+	ci::gl::Texture       mFrame;
+	float                 mAlpha;
+	bool                  mUseAlphaShader;
 
 	static ci::gl::GlslProg sShader;
 };

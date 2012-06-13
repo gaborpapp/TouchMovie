@@ -28,6 +28,8 @@ public:
 
 	void              setMovieIdle( ci::qtime::MovieGl &movie );
 	void              setMovieActive( ci::qtime::MovieGl &movie );
+	void              setAudioIdle( ci::audio::SourceRef &audio );
+	void              setAudioActive( ci::audio::SourceRef &audio );
 	const std::string getName() const;
 	void              setAlphaIdle( const float Alpha );
 	const float       getAlphaIdle() const;
