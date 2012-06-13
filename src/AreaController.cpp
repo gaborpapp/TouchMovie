@@ -11,13 +11,14 @@ namespace TouchMovie
 
 AreaController::AreaController()
 : mpBackground( 0 )
+, mDrawFrame( false )
 {
 }
 
 AreaController::~AreaController()
 {
-	if( mpBackground )
-		delete mpBackground;
+//	if( mpBackground )
+//		delete mpBackground;
 }
 
 void AreaController::update()
@@ -245,40 +246,37 @@ float AreaController::getMarginH( std::string areaName )
 	return 0;
 }
 
-void AreaController::setMarginW( std::string areaName, float marginW )
+void AreaController::setMarginV( std::string areaName, float marginV )
 {
 	Area *pArea = _getArea( areaName );
 
 	if( pArea )
-		pArea->setMarginW( marginW );
+		pArea->setMarginV( marginV );
 }
 
-float AreaController::getMarginW( std::string areaName )
+float AreaController::getMarginV( std::string areaName )
 {
 	Area *pArea = _getArea( areaName );
 
 	if( pArea )
-		return pArea->getMarginW();
+		return pArea->getMarginV();
 
 	return 0;
 }
 
-void AreaController::setDrawFrame( std::string areaName, bool drawFrame )
+void AreaController::setDrawFrame( bool drawFrame )
 {
-	Area *pArea = _getArea( areaName );
+	mDrawFrame = drawFrame;
 
-	if( pArea )
-		pArea->setDrawFrame( drawFrame );
+	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
+	{
+		(*p)->setDrawFrame( drawFrame );
+	}
 }
 
-bool AreaController::getDrawFrame( std::string areaName )
+bool AreaController::getDrawFrame()
 {
-	Area *pArea = _getArea( areaName );
-
-	if( pArea )
-		return pArea->getDrawFrame();
-
-	return false;
+	return mDrawFrame;
 }
 
 void AreaController::setFadeIn( std::string areaName, float fadeIn )
@@ -349,7 +347,7 @@ void AreaController::resize()
 	{
 		Rectf rectOrig         = (*p)->getRectOrig();
 		Rectf rectNew          = Rectf( rectMapping.map( rectOrig.getUpperLeft()), rectMapping.map( rectOrig.getLowerRight()));
-		Rectf rectSensitive    = rectOrig.inflated( Vec2f( -(*p)->getMarginH(), -(*p)->getMarginW()));
+		Rectf rectSensitive    = rectOrig.inflated( Vec2f( -(*p)->getMarginH(), -(*p)->getMarginV()));
 		Rectf rectSensitiveNew = Rectf( rectMapping.map( rectSensitive.getUpperLeft()), rectMapping.map( rectSensitive.getLowerRight()));
 
 		(*p)->setRect( rectNew );

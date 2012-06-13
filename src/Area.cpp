@@ -13,7 +13,7 @@ Area::Area( std::string name, Rectf &rect )
 , mRectOrig( rect )
 , mRectSensitive( rect )
 , mMarginH( 0 )
-, mMarginW( 0 )
+, mMarginV( 0 )
 , mpMovieIdle( 0 )
 , mpMovieActive( 0 )
 , mFadeIn( 1.0f )
@@ -232,14 +232,14 @@ const float Area::getMarginH() const
 	return mMarginH;
 }
 
-void Area::setMarginW( const float marginW )
+void Area::setMarginV( const float marginV )
 {
-	mMarginW = math<float>::max( marginW, 0.0f );
+	mMarginV = math<float>::max( marginV, 0.0f );
 }
 
-const float Area::getMarginW() const
+const float Area::getMarginV() const
 {
-	return mMarginW;
+	return mMarginV;
 }
 
 void Area::setDrawFrame( const bool drawFrame )

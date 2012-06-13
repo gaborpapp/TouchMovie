@@ -44,8 +44,8 @@ public:
 	void              setMarginH( const float marginH );
 	const float       getMarginH() const;
 
-	void              setMarginW( const float marginW );
-	const float       getMarginW() const;
+	void              setMarginV( const float marginV );
+	const float       getMarginV() const;
 
 	void              setDrawFrame( const bool drawFrame );
 	const bool        getDrawFrame() const;
@@ -68,7 +68,7 @@ private:
 	ci::Rectf        mRectSensitive;
 	ci::Rectf        mRectOrig;
 	float            mMarginH;
-	float            mMarginW;
+	float            mMarginV;
 
 	Movie           *mpMovieIdle;
 	Movie           *mpMovieActive;

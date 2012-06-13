@@ -4,8 +4,7 @@
 <!-- ====================================================================== -->
 <Settings
   Width     = "800"
-  Height    = "600"
-  DrawFrame = "0">
+  Height    = "600">
 </Settings>
 <Background
   PathMovie = "_GB.mov"
@@ -51,7 +50,7 @@
     width           = "480"
     height          = "480"
     MarginH         = "100"
-    MarginW         = "40"
+    MarginV         = "40"
     AlphaShader     = "0" >
   </Movie>
   <Movie

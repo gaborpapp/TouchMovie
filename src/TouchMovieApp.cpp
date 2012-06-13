@@ -52,9 +52,6 @@ void TouchMovieApp::prepareSettings( Settings *settings )
 
 void TouchMovieApp::setup()
 {
-	loadXml( "data.xml" );
-	setWindowSize( mWidth, mHeight );
-
 	// params
 	fs::path paramsXml( getAssetPath( "params.xml" ));
 	if ( paramsXml.empty() )
@@ -77,6 +74,7 @@ void TouchMovieApp::setup()
 	mParams.addText( "Touch Movie" );
 	mParams.addParam( "FPS" , &mFPS, "", true );
 	mParams.addPersistentParam( "FullScreen", &mFullScreen, false );
+	mParams.addPersistentParam( "DrawFrame" , &mDrawFrame , false );
 
 	TwDefine( "TW_HELP visible=false" );
 	TwDefine( "TouchMovie iconified=true" );
@@ -104,6 +102,9 @@ void TouchMovieApp::setup()
 		quit();
 	}
 #endif /* USE_KINECT */
+
+	loadXml( "data.xml" );
+	setWindowSize( mWidth, mHeight );
 
 	if( mFullScreen )
 		hideCursor();
@@ -134,7 +135,6 @@ void TouchMovieApp::loadXml( std::string xmlName )
 
 		mWidth     = xmlSettings.getAttributeValue<int> ( "Width"    , 800 );
 		mHeight    = xmlSettings.getAttributeValue<int> ( "Height"   , 600 );
-		mDrawFrame = xmlSettings.getAttributeValue<bool>( "DrawFrame", 0   );
 	}
 	if( doc.hasChild( "Background" ))
 	{
@@ -169,22 +169,23 @@ void TouchMovieApp::loadXml( std::string xmlName )
 			float       width              = child->getAttributeValue<float>      ( "width"       , 1.0 );
 			float       height             = child->getAttributeValue<float>      ( "height"      , 1.0 );
 			float       marginH            = child->getAttributeValue<float>      ( "MarginH"      , 0.0 );
-			float       marginW            = child->getAttributeValue<float>      ( "MarginW"     , 0.0 );
+			float       marginV            = child->getAttributeValue<float>      ( "MarginV"     , 0.0 );
 			bool        useAlphaShader     = child->getAttributeValue<bool>       ( "AlphaShader" , 1.0 );
 
 			Rectf rect = Rectf( x, y, x + width, y + height );
 
 			mAreaController.addArea          ( strName, rect               );
 			mAreaController.setMarginH       ( strName, marginH            );
-			mAreaController.setMarginW       ( strName, marginW            );
+			mAreaController.setMarginV       ( strName, marginV            );
 			mAreaController.setMovieIdle     ( strName, strPathIdle        );
 			mAreaController.setMovieActive   ( strName, strPathActive      );
 			mAreaController.setAudioActive   ( strName, strPathActiveAudio );
-			mAreaController.setDrawFrame     ( strName, mDrawFrame         );
 			mAreaController.setFadeIn        ( strName, fadeIn             );
 			mAreaController.setFadeOut       ( strName, fadeOut            );
 			mAreaController.setUseAlphaShader( strName, useAlphaShader     );
 		}
+
+		mAreaController.setDrawFrame( mDrawFrame );
 	}
 }
 
@@ -248,6 +249,11 @@ void TouchMovieApp::update()
 	if( mFullScreen != isFullScreen())
 	{
 		setFullScreen( mFullScreen );
+	}
+
+	if( mDrawFrame != mAreaController.getDrawFrame())
+	{
+		mAreaController.setDrawFrame( mDrawFrame );
 	}
 }
 

@@ -30,11 +30,11 @@ public:
 	void  setMarginH( std::string areaName, float marginH );
 	float getMarginH( std::string areaName );
 
-	void  setMarginW( std::string areaName, float marginW );
-	float getMarginW( std::string areaName );
+	void  setMarginV( std::string areaName, float marginV );
+	float getMarginV( std::string areaName );
 
-	void setDrawFrame( std::string areaName, bool drawFrame );
-	bool getDrawFrame( std::string areaName );
+	void setDrawFrame( bool drawFrame );
+	bool getDrawFrame();
 
 	void  setFadeIn( std::string areaName, float fadeIn );
 	float getFadeIn( std::string areaName );
@@ -72,6 +72,8 @@ private:
 	std::vector<Area*>  mAreas;
 	std::vector<Area*>  mAreasActMouse;
 	std::vector<Area*>  mAreasActTouch;
+
+	bool                mDrawFrame;
 };
 
 } // namespace TouchMovie
