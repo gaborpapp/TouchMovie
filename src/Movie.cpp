@@ -92,11 +92,6 @@ bool Movie::isPlaying()
 
 void Movie::play( bool fromStart )
 {
-	mMovie.setVolume( mAlpha );
-
-	if( mTrack )
-		mTrack->setVolume( mAlpha );
-
 	if( fromStart )
 		mMovie.seekToStart();
 	mMovie.play();
@@ -134,6 +129,11 @@ void Movie::setCurrentTime( float time )
 void Movie::setAlpha( const float alpha )
 {
 	mAlpha = math<float>::max( math<float>::min( alpha, 1.0f ), 0.0f );
+
+	mMovie.setVolume( mAlpha );
+
+	if( mTrack )
+		mTrack->setVolume( mAlpha );
 }
 
 float Movie::getAlpha() const

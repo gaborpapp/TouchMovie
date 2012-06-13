@@ -50,6 +50,21 @@
     y               = "110"
     width           = "480"
     height          = "480"
+    MarginH         = "100"
+    MarginW         = "40"
+    AlphaShader     = "0" >
+  </Movie>
+  <Movie
+    Name            = "demon"
+    PathIdle        = "demon_idle.mov"
+    PathActive      = "demon_active.mov"
+    PathActiveAudio = "demon_active.mp3"
+    FadeIn          = "3"
+    FadeOut         = "3"
+    x               = "1467.1"
+    y               = "177"
+    width           = "400"
+    height          = "480"
     AlphaShader     = "0" >
   </Movie>
 </TouchMovie>

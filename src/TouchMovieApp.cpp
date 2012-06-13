@@ -168,11 +168,15 @@ void TouchMovieApp::loadXml( std::string xmlName )
 			float       y                  = child->getAttributeValue<float>      ( "y"           , 1.0 );
 			float       width              = child->getAttributeValue<float>      ( "width"       , 1.0 );
 			float       height             = child->getAttributeValue<float>      ( "height"      , 1.0 );
+			float       marginH            = child->getAttributeValue<float>      ( "MarginH"      , 0.0 );
+			float       marginW            = child->getAttributeValue<float>      ( "MarginW"     , 0.0 );
 			bool        useAlphaShader     = child->getAttributeValue<bool>       ( "AlphaShader" , 1.0 );
 
 			Rectf rect = Rectf( x, y, x + width, y + height );
 
 			mAreaController.addArea          ( strName, rect               );
+			mAreaController.setMarginH       ( strName, marginH            );
+			mAreaController.setMarginW       ( strName, marginW            );
 			mAreaController.setMovieIdle     ( strName, strPathIdle        );
 			mAreaController.setMovieActive   ( strName, strPathActive      );
 			mAreaController.setAudioActive   ( strName, strPathActiveAudio );

@@ -27,6 +27,12 @@ public:
 	void setAudioActive( std::string areaName, std::string audioName );
 	void setRect( std::string areaName, ci::Rectf &rect );
 
+	void  setMarginH( std::string areaName, float marginH );
+	float getMarginH( std::string areaName );
+
+	void  setMarginW( std::string areaName, float marginW );
+	float getMarginW( std::string areaName );
+
 	void setDrawFrame( std::string areaName, bool drawFrame );
 	bool getDrawFrame( std::string areaName );
 
@@ -51,7 +57,6 @@ public:
 	Background *getBackground();
 private:
 	Area  *_getArea( std::string areaName );
-	Area  *_getArea( const ci::Vec2i &pos );
 	void   _actionArea( const ci::Vec2i &pos, ActionFunc pActionFunc );
 	bool   _isAreaAct ( Area *pArea );
 

@@ -227,6 +227,42 @@ void AreaController::setRect( std::string areaName, Rectf &rect )
 		pArea->setRect( rect );
 }
 
+void AreaController::setMarginH( std::string areaName, float marginH )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+		pArea->setMarginH( marginH );
+}
+
+float AreaController::getMarginH( std::string areaName )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+		return pArea->getMarginH();
+
+	return 0;
+}
+
+void AreaController::setMarginW( std::string areaName, float marginW )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+		pArea->setMarginW( marginW );
+}
+
+float AreaController::getMarginW( std::string areaName )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+		return pArea->getMarginW();
+
+	return 0;
+}
+
 void AreaController::setDrawFrame( std::string areaName, bool drawFrame )
 {
 	Area *pArea = _getArea( areaName );
@@ -311,10 +347,13 @@ void AreaController::resize()
 
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		Rectf rectOrig = (*p)->getRectOrig();
-		Rectf rectNew  = Rectf( rectMapping.map( rectOrig.getUpperLeft()), rectMapping.map( rectOrig.getLowerRight()));
+		Rectf rectOrig         = (*p)->getRectOrig();
+		Rectf rectNew          = Rectf( rectMapping.map( rectOrig.getUpperLeft()), rectMapping.map( rectOrig.getLowerRight()));
+		Rectf rectSensitive    = rectOrig.inflated( Vec2f( -(*p)->getMarginH(), -(*p)->getMarginW()));
+		Rectf rectSensitiveNew = Rectf( rectMapping.map( rectSensitive.getUpperLeft()), rectMapping.map( rectSensitive.getLowerRight()));
 
 		(*p)->setRect( rectNew );
+		(*p)->setRectSensitive( rectSensitiveNew );
 	}
 }
 
@@ -356,19 +395,6 @@ Area *AreaController::_getArea( std::string areaName )
 	return 0;
 }
 
-Area *AreaController::_getArea( const Vec2i &pos )
-{
-	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
-	{
-		if((*p)->getRect().contains( pos ))
-		{
-			return *p;
-		}
-	}
-
-	return 0;
-}
-
 bool AreaController::_isAreaAct( Area *pArea )
 {
 	for( std::vector<Area*>::iterator p = mAreasActMouse.begin(); p != mAreasActMouse.end(); ++p )
@@ -394,7 +420,7 @@ void AreaController::_actionArea( const ci::Vec2i &pos, ActionFunc pActionFunc )
 {
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		if((*p)->getRect().contains( pos ))
+		if((*p)->getRectSensitive().contains( pos ))
 		{
 			pActionFunc( *p, this );
 		}

@@ -11,6 +11,9 @@ Area::Area( std::string name, Rectf &rect )
 : mName( name )
 , mRect( rect )
 , mRectOrig( rect )
+, mRectSensitive( rect )
+, mMarginH( 0 )
+, mMarginW( 0 )
 , mpMovieIdle( 0 )
 , mpMovieActive( 0 )
 , mFadeIn( 1.0f )
@@ -50,6 +53,7 @@ void Area::draw()
 	{
 		gl::drawString( mName, mRect.getUpperLeft());
 		gl::drawStrokedRect( mRect );
+		gl::drawStrokedRect( mRectSensitive );
 	}
 }
 
@@ -203,9 +207,39 @@ const Rectf Area::getRect() const
 	return mRect;
 }
 
+void Area::setRectSensitive( const Rectf &rectSensitive )
+{
+	mRectSensitive = rectSensitive;
+}
+
+const Rectf Area::getRectSensitive() const
+{
+	return mRectSensitive;
+}
+
 const Rectf Area::getRectOrig() const
 {
 	return mRectOrig;
+}
+
+void Area::setMarginH( const float marginH )
+{
+	mMarginH = math<float>::max( marginH, 0.0f );
+}
+
+const float Area::getMarginH() const
+{
+	return mMarginH;
+}
+
+void Area::setMarginW( const float marginW )
+{
+	mMarginW = math<float>::max( marginW, 0.0f );
+}
+
+const float Area::getMarginW() const
+{
+	return mMarginW;
 }
 
 void Area::setDrawFrame( const bool drawFrame )

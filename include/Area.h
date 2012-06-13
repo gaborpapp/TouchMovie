@@ -37,7 +37,15 @@ public:
 	const float       getAlphaActive() const;
 	void              setRect( const ci::Rectf &rect );
 	const ci::Rectf   getRect() const;
+	void              setRectSensitive( const ci::Rectf &rectSensitive );
+	const ci::Rectf   getRectSensitive() const;
 	const ci::Rectf   getRectOrig() const;
+
+	void              setMarginH( const float marginH );
+	const float       getMarginH() const;
+
+	void              setMarginW( const float marginW );
+	const float       getMarginW() const;
 
 	void              setDrawFrame( const bool drawFrame );
 	const bool        getDrawFrame() const;
@@ -57,7 +65,11 @@ private:
 private:
 	std::string      mName;
 	ci::Rectf        mRect;
+	ci::Rectf        mRectSensitive;
 	ci::Rectf        mRectOrig;
+	float            mMarginH;
+	float            mMarginW;
+
 	Movie           *mpMovieIdle;
 	Movie           *mpMovieActive;
 
