@@ -79,8 +79,10 @@ void Movie::draw()
 void Movie::setAudio( audio::SourceRef &audio )
 {
 	mAudio = audio;
-//	audio::Output::play( mAudio );
 	mTrack = audio::Output::addTrack( mAudio );
+	mTrack->setTime( 0 );
+	mTrack->setLooping( true );
+	mTrack->stop();
 }
 
 bool Movie::isPlaying()

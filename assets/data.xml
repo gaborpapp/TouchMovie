@@ -17,7 +17,7 @@
     Name            = "meditation"
     PathIdle        = "meditation_idle.mov"
     PathActive      = "meditation_active.mov"
-    PathActiveAudio = "meditation.wav"
+    PathActiveAudio = "meditation_active.mp3"
     FadeIn          = "1"
     FadeOut         = "1"
     x               = "329.3"
@@ -30,13 +30,26 @@
     Name            = "repul"
     PathIdle        = "repul_idle.mov"
     PathActive      = "repul_active.mov"
-    PathActiveAudio = ""
+    PathActiveAudio = "repul_active.mp3"
     FadeIn          = "3"
     FadeOut         = "3"
     x               = "1104"
     y               = "38"
     width           = "200"
     height          = "500"
+    AlphaShader     = "0" >
+  </Movie>
+  <Movie
+    Name            = "tancos"
+    PathIdle        = "tancos_idle.mov"
+    PathActive      = "tancos_active.mov"
+    PathActiveAudio = "tancos_active.mp3"
+    FadeIn          = "3"
+    FadeOut         = "3"
+    x               = "737"
+    y               = "110"
+    width           = "480"
+    height          = "480"
     AlphaShader     = "0" >
   </Movie>
 </TouchMovie>

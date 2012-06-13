@@ -158,25 +158,28 @@ void AreaController::setAudioActive( std::string areaName, std::string audioName
 
 qtime::MovieGl AreaController::_loadMovie( std::string strMovieName )
 {
-	try
+	if( ! strMovieName.empty())
 	{
-		// load up the movie, set it to loop, and begin playing
-		if( strMovieName.find( "http://") != std::string::npos )
+		try
 		{
-			qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( strMovieName ));
-			movieLoader.waitForPlaythroughOk();
-			return qtime::MovieGl( movieLoader );
-		}
-		else
-		{
-			fs::path xmlPath( getAssetPath( strMovieName ));
+			// load up the movie, set it to loop, and begin playing
+			if( strMovieName.find( "http://") != std::string::npos )
+			{
+				qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( strMovieName ));
+				movieLoader.waitForPlaythroughOk();
+				return qtime::MovieGl( movieLoader );
+			}
+			else
+			{
+				fs::path xmlPath( getAssetPath( strMovieName ));
 
-			return qtime::MovieGl( xmlPath );
+				return qtime::MovieGl( xmlPath );
+			}
 		}
-	}
-	catch( ... )
-	{
-		console() << "Unable to load the movie: " << strMovieName << std::endl;
+		catch( ... )
+		{
+			console() << "Unable to load the movie: " << strMovieName << std::endl;
+		}
 	}
 
 	return qtime::MovieGl();
@@ -184,31 +187,35 @@ qtime::MovieGl AreaController::_loadMovie( std::string strMovieName )
 
 ImageSourceRef AreaController::_loadImage( std::string strImageName )
 {
-	try
+	if( ! strImageName.empty())
 	{
-		fs::path xmlPath( getAssetPath( strImageName ));
-		return loadImage( xmlPath );
+		try
+		{
+			fs::path xmlPath( getAssetPath( strImageName ));
+			return loadImage( xmlPath );
+		}
+		catch( ... )
+		{
+			console() << "Unable to load the image: " << strImageName << std::endl;
+		}
 	}
-	catch( ... )
-	{
-		console() << "Unable to load the image: " << strImageName << std::endl;
-	}
-
 	return ImageSourceRef();
 }
 
 audio::SourceRef AreaController::_loadAudio( std::string strAudioName )
 {
-	try
+	if( ! strAudioName.empty())
 	{
-		fs::path xmlPath( getAssetPath( strAudioName ));
-		return audio::load( xmlPath.string());
+		try
+		{
+			fs::path xmlPath( getAssetPath( strAudioName ));
+			return audio::load( xmlPath.string());
+		}
+		catch( ... )
+		{
+			console() << "Unable to load the audio: " << strAudioName << std::endl;
+		}
 	}
-	catch( ... )
-	{
-		console() << "Unable to load the audio: " << strAudioName << std::endl;
-	}
-
 	return audio::SourceRef();
 }
 

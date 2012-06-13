@@ -175,7 +175,7 @@ void TouchMovieApp::loadXml( std::string xmlName )
 			mAreaController.addArea          ( strName, rect               );
 			mAreaController.setMovieIdle     ( strName, strPathIdle        );
 			mAreaController.setMovieActive   ( strName, strPathActive      );
-//			mAreaController.setAudioActive   ( strName, strPathActiveAudio );
+			mAreaController.setAudioActive   ( strName, strPathActiveAudio );
 			mAreaController.setDrawFrame     ( strName, mDrawFrame         );
 			mAreaController.setFadeIn        ( strName, fadeIn             );
 			mAreaController.setFadeOut       ( strName, fadeOut            );
