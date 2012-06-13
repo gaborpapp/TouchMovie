@@ -39,8 +39,8 @@ void KinectUser::setup( const fs::path &path )
 	mParams.addText( "User outlines" );
 	mParams.addPersistentParam( " Enable", &mOutlineEnable, true );
 	mParams.addPersistentParam( " Blur", &mOutlineBlurAmt, 15.0, "min=1 max=15 step=.5" );
-	mParams.addPersistentParam( " Erode", &mOutlineErodeAmt, 3.0, "min=1 max=15 step=.5" );
-	mParams.addPersistentParam( " Dilate", &mOutlineDilateAmt, 7.0, "min=1 max=15 step=.5" );
+	mParams.addPersistentParam( " Erode", &mOutlineErodeAmt, 4.0, "min=1 max=15 step=.5" );
+	mParams.addPersistentParam( " Dilate", &mOutlineDilateAmt, 4.0, "min=1 max=15 step=.5" );
 	mParams.addPersistentParam( " Threshold", &mOutlineThres, 128, "min=1 max=255" );
 	mParams.addPersistentParam( " Thickness", &mOutlineWidth, 3, "min=.5 max=15 step=.2" );
 	mParams.addPersistentParam( " Miter limit", &mMiterLimit, .75, "min=-1 max=1 step=.05" );
@@ -143,29 +143,25 @@ void KinectUser::update()
 			{
 				// create a new vector that can contain 3D vertices
 				vector< Vec3f > vertices;
-				// to improve performance, make room for the vertices + 2
-				// adjacency vertices
-				vertices.reserve( points.size() + 2 );
 
-				// first, add an adjacency vertex at the beginning
-				vertices.push_back( 2.0f * Vec3f( points[ 0 ] ) -
-						Vec3f( points[ 1 ] ) );
+				vertices.reserve( points.size() );
 
-				// next, add all 2D points as 3D vertices
+				// add all 2D points as 3D vertices
 				vector< Vec2f >::const_iterator it;
 				for ( it = points.begin() ; it != points.end(); ++it )
 					vertices.push_back( Vec3f( *it ) );
 
-				// next, add an adjacency vertex at the end
-				size_t n = points.size();
-				vertices.push_back( 2.0f * Vec3f( points[ n - 1 ] ) -
-						Vec3f( points[ n - 2 ] ) );
-
 				// now that we have a list of vertices, create the index buffer
-				n = vertices.size() - 2;
+				size_t n = vertices.size();
+
 				vector< uint32_t > indices;
 				indices.reserve( n * 4 );
 
+
+				indices.push_back( n - 1 );
+				indices.push_back( 0 );
+				indices.push_back( 1 );
+				indices.push_back( 2 );
 				for ( size_t i = 1; i < vertices.size() - 2; ++i )
 				{
 					indices.push_back( i - 1 );
@@ -173,6 +169,16 @@ void KinectUser::update()
 					indices.push_back( i + 1 );
 					indices.push_back( i + 2 );
 				}
+				indices.push_back( n - 3 );
+				indices.push_back( n - 2 );
+				indices.push_back( n - 1 );
+				indices.push_back( 0 );
+
+				indices.push_back( n - 2 );
+				indices.push_back( n - 1 );
+				indices.push_back( 0 );
+				indices.push_back( 1 );
+
 
 				// finally, create the mesh
 				gl::VboMesh::Layout layout;
