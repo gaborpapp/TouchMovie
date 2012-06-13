@@ -5,6 +5,8 @@
 #include "cinder/gl/gl.h"
 #include "cinder/app/App.h"
 
+#include "AntTweakBar.h"
+
 #include "CinderOpenCV.h"
 #include "opencv2/imgproc/imgproc.hpp"
 
