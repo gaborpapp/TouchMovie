@@ -92,6 +92,11 @@ bool Movie::isPlaying()
 
 void Movie::play( bool fromStart )
 {
+	mMovie.setVolume( mAlpha );
+
+	if( mTrack )
+		mTrack->setVolume( mAlpha );
+
 	if( fromStart )
 		mMovie.seekToStart();
 	mMovie.play();
