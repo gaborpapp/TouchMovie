@@ -17,6 +17,7 @@ Area::Area( std::string name, Rectf &rect )
 , mFadeOut( 1.0f )
 , mDrawFrame( false )
 , mState( AS_IDLE )
+, mUseAlphaShader( true )
 {
 }
 
@@ -91,6 +92,7 @@ void Area::setMovieIdle( qtime::MovieGl &movie )
 
 	mpMovieIdle = new Movie( movie, mRect );
 
+	mpMovieIdle->setUseAlphaShader( mUseAlphaShader );
 	mpMovieIdle->setAlpha( 1.0f );
 	mpMovieIdle->play( true );
 }
@@ -102,6 +104,7 @@ void Area::setMovieActive( qtime::MovieGl &movie )
 
 	mpMovieActive = new Movie( movie, mRect );
 
+	mpMovieActive->setUseAlphaShader( mUseAlphaShader );
 	mpMovieActive->setAlpha( 0.0f );
 	mpMovieActive->stop();
 }
@@ -217,6 +220,22 @@ void Area::setFadeOut( const float fadeOut )
 const float Area::getFadeOut() const
 {
 	return mFadeOut;
+}
+
+bool Area::getUseAlphaShader()
+{
+	return mUseAlphaShader;
+}
+
+void Area::setUseAlphaShader( bool useAlphaShader )
+{
+	mUseAlphaShader = useAlphaShader;
+
+	if( mpMovieIdle )
+		mpMovieIdle->setUseAlphaShader( useAlphaShader );
+
+	if( mpMovieActive )
+		mpMovieActive->setUseAlphaShader( useAlphaShader );
 }
 
 void Area::_changeAlpha()

@@ -4,7 +4,7 @@
 #include "cinder/gl/GlslProg.h"
 #include "Area.h"
 
-#define USE_SHADER 1
+#define USE_SHADER 0
 
 namespace TouchMovie
 {
@@ -28,16 +28,18 @@ public:
 	void              setRect( const ci::Rectf &alpha );
 	const ci::Rectf   getRect() const;
 
+	bool              getUseAlphaShader();
+	void              setUseAlphaShader( bool useAlphaShader );
+
 private:
 	ci::qtime::MovieGl mMovie;
 	ci::Rectf          mRect;
 
 	ci::gl::Texture    mFrame;
 	float              mAlpha;
+	bool               mUseAlphaShader;
 
-#if USE_SHADER == 1
 	static ci::gl::GlslProg sShader;
-#endif
 };
 
 } // namespace TouchMovie

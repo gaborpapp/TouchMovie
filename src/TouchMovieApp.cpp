@@ -25,11 +25,12 @@ public:
 	void draw();
 
 private:
-	void LoadXml( std::string xmlName );
+	void loadXml( std::string xmlName );
 
 	AreaController      mAreaController;
 	int                 mWidth;
 	int                 mHeight;
+	bool                mDrawFrame;
 
 #if USE_KINECT == 1
 	KinectUser          mKinectUser;
@@ -44,7 +45,7 @@ void TouchMovieApp::prepareSettings( Settings *settings )
 
 void TouchMovieApp::setup()
 {
-	LoadXml( "data.xml" );
+	loadXml( "data.xml" );
 	setWindowSize( mWidth, mHeight );
 
 	// params
@@ -91,10 +92,8 @@ void TouchMovieApp::shutdown()
 	params::PInterfaceGl::save();
 }
 
-void TouchMovieApp::LoadXml( std::string xmlName )
+void TouchMovieApp::loadXml( std::string xmlName )
 {
-	bool drawFrame = false;
-
 	fs::path xmlPath( getAssetPath( xmlName ) );
 	if( ! fs::exists( xmlPath ))
 	{
@@ -110,22 +109,25 @@ void TouchMovieApp::LoadXml( std::string xmlName )
 	{
 		XmlTree xmlSettings = doc.getChild( "Settings" );
 
-		mWidth    = xmlSettings.getAttributeValue<int> ( "Width"    , 800 );
-		mHeight   = xmlSettings.getAttributeValue<int> ( "Height"   , 600 );
-		drawFrame = xmlSettings.getAttributeValue<bool>( "DrawFrame", 0   );
+		mWidth     = xmlSettings.getAttributeValue<int> ( "Width"    , 800 );
+		mHeight    = xmlSettings.getAttributeValue<int> ( "Height"   , 600 );
+		mDrawFrame = xmlSettings.getAttributeValue<bool>( "DrawFrame", 0   );
 	}
 	if( doc.hasChild( "Background" ))
 	{
 		XmlTree xmlBackground = doc.getChild( "Background" );
 
-		std::string strPathImage = xmlBackground.getAttributeValue<std::string>( "PathImage", ""  );
-		std::string strPathMovie = xmlBackground.getAttributeValue<std::string>( "PathMovie", ""  );
-		int         width        = xmlBackground.getAttributeValue<int>        ( "Width"    , 800 );
-		int         height       = xmlBackground.getAttributeValue<int>        ( "Height"   , 600 );
+		std::string strPathImage   = xmlBackground.getAttributeValue<std::string>( "PathImage"  , ""  );
+		std::string strPathMovie   = xmlBackground.getAttributeValue<std::string>( "PathMovie"  , ""  );
+		int         width          = xmlBackground.getAttributeValue<int>        ( "Width"      , 800 );
+		int         height         = xmlBackground.getAttributeValue<int>        ( "Height"     , 600 );
+		bool        useAlphaShader = xmlBackground.getAttributeValue<bool>       ( "AlphaShader", 0   );
 
 		mAreaController.setBackground     ( width, height );
 		mAreaController.setBackgroundImage( strPathImage  );
 		mAreaController.setBackgroundMovie( strPathMovie  );
+		Background *pBackground = mAreaController.getBackground();
+		pBackground->setUseAlphaShader( useAlphaShader );
 	}
 	if( doc.hasChild( "TouchMovie" ))
 	{
@@ -133,24 +135,26 @@ void TouchMovieApp::LoadXml( std::string xmlName )
 
 		for( XmlTree::Iter child = xmlTouchMovie.begin(); child != xmlTouchMovie.end(); ++child )
 		{
-			std::string strName       = child->getAttributeValue<std::string>( "Name"         );
-			std::string strPathIdle   = child->getAttributeValue<std::string>( "PathIdle"     );
-			std::string strPathActive = child->getAttributeValue<std::string>( "PathActive"   );
-			float       fadeIn        = child->getAttributeValue<float>      ( "FadeIn" , 1.0 );
-			float       fadeOut       = child->getAttributeValue<float>      ( "FadeOut", 1.0 );
-			float       x             = child->getAttributeValue<float>      ( "x"      , 1.0 );
-			float       y             = child->getAttributeValue<float>      ( "y"      , 1.0 );
-			float       width         = child->getAttributeValue<float>      ( "width"  , 1.0 );
-			float       height        = child->getAttributeValue<float>      ( "height" , 1.0 );
+			std::string strName        = child->getAttributeValue<std::string>( "Name"              );
+			std::string strPathIdle    = child->getAttributeValue<std::string>( "PathIdle"          );
+			std::string strPathActive  = child->getAttributeValue<std::string>( "PathActive"        );
+			float       fadeIn         = child->getAttributeValue<float>      ( "FadeIn"      , 1.0 );
+			float       fadeOut        = child->getAttributeValue<float>      ( "FadeOut"     , 1.0 );
+			float       x              = child->getAttributeValue<float>      ( "x"           , 1.0 );
+			float       y              = child->getAttributeValue<float>      ( "y"           , 1.0 );
+			float       width          = child->getAttributeValue<float>      ( "width"       , 1.0 );
+			float       height         = child->getAttributeValue<float>      ( "height"      , 1.0 );
+			bool        useAlphaShader = child->getAttributeValue<bool>       ( "AlphaShader" , 1.0 );
 
 			Rectf rect = Rectf( x, y, x + width, y + height );
 
-			mAreaController.addArea       ( strName, rect          );
-			mAreaController.setMovieIdle  ( strName, strPathIdle   );
-			mAreaController.setMovieActive( strName, strPathActive );
-			mAreaController.setDrawFrame  ( strName, drawFrame     );
-			mAreaController.setFadeIn     ( strName, fadeIn        );
-			mAreaController.setFadeOut    ( strName, fadeOut       );
+			mAreaController.addArea          ( strName, rect           );
+			mAreaController.setMovieIdle     ( strName, strPathIdle    );
+			mAreaController.setMovieActive   ( strName, strPathActive  );
+			mAreaController.setDrawFrame     ( strName, mDrawFrame     );
+			mAreaController.setFadeIn        ( strName, fadeIn         );
+			mAreaController.setFadeOut       ( strName, fadeOut        );
+			mAreaController.setUseAlphaShader( strName, useAlphaShader );
 		}
 	}
 }

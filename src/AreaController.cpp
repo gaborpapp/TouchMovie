@@ -64,23 +64,23 @@ void AreaController::setBackground( int width, int height )
 	mpBackground = new Background( rect );
 }
 
-void AreaController::setBackgroundImage( fs::path pathImage )
+void AreaController::setBackgroundImage( std::string strImageName )
 {
-	if( mpBackground && ! pathImage.empty())
+	if( mpBackground && ! strImageName.empty())
 	{
-		ci::ImageSourceRef imageSource = _loadImage( pathImage );
+		ci::ImageSourceRef imageSource = _loadImage( strImageName );
 		if( imageSource )
-			mpBackground->setImage( imageSource );
+			mpBackground->setImage( strImageName, imageSource );
 	}
 }
 
-void AreaController::setBackgroundMovie( fs::path pathMovie )
+void AreaController::setBackgroundMovie( std::string strMovieName )
 {
-	if( mpBackground && ! pathMovie.empty())
+	if( mpBackground && ! strMovieName.empty())
 	{
-		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
+		ci::qtime::MovieGl movie = _loadMovie( strMovieName );
 		if( movie )
-			mpBackground->setMovie( movie );
+			mpBackground->setMovie( strMovieName, movie );
 	}
 }
 
@@ -89,16 +89,16 @@ Background *AreaController::getBackground()
 	return mpBackground;
 }
 
-void AreaController::addArea( std::string name, Rectf &rect )
+void AreaController::addArea( std::string areaName, Rectf &rect )
 {
-	mAreas.push_back( new Area( name, rect ));
+	mAreas.push_back( new Area( areaName, rect ));
 }
 
-void AreaController::removeArea( std::string name )
+void AreaController::removeArea( std::string areaName )
 {
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		if( (*p)->getName() == name )
+		if( (*p)->getName() == areaName )
 		{
 			delete *p;
 			mAreas.erase( p );
@@ -107,90 +107,90 @@ void AreaController::removeArea( std::string name )
 	}
 }
 
-void AreaController::setMovieIdle( std::string name, fs::path pathMovie )
+void AreaController::setMovieIdle( std::string areaName, std::string movieName )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 	{
-		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
+		ci::qtime::MovieGl movie = _loadMovie( movieName );
 		if( movie )
 			pArea->setMovieIdle( movie );
 	}
 }
 
-void AreaController::setMovieActive( std::string name, fs::path pathMovie )
+void AreaController::setMovieActive( std::string areaName, std::string movieName )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 	{
-		ci::qtime::MovieGl movie = _loadMovie( pathMovie );
+		ci::qtime::MovieGl movie = _loadMovie( movieName );
 		if( movie )
 			pArea->setMovieActive( movie );
 	}
 }
 
-qtime::MovieGl AreaController::_loadMovie( fs::path pathMovie )
+qtime::MovieGl AreaController::_loadMovie( std::string strMovieName )
 {
 	try
 	{
 		// load up the movie, set it to loop, and begin playing
-		if( pathMovie.string().find( "http://") != std::string::npos )
+		if( strMovieName.find( "http://") != std::string::npos )
 		{
-			qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( pathMovie.string()));
+			qtime::MovieLoader movieLoader = qtime::MovieLoader( Url( strMovieName ));
 			movieLoader.waitForPlaythroughOk();
 			return qtime::MovieGl( movieLoader );
 		}
 		else
 		{
-			fs::path xmlPath( getAssetPath( pathMovie ));
+			fs::path xmlPath( getAssetPath( strMovieName ));
 
 			return qtime::MovieGl( xmlPath );
 		}
 	}
 	catch( ... )
 	{
-		console() << "Unable to load the movie: " << pathMovie << std::endl;
+		console() << "Unable to load the movie: " << strMovieName << std::endl;
 	}
 
 	return qtime::MovieGl();
 }
 
-ImageSourceRef AreaController::_loadImage( fs::path pathImage )
+ImageSourceRef AreaController::_loadImage( std::string strImageName )
 {
 	try
 	{
-		fs::path xmlPath( getAssetPath( pathImage ));
+		fs::path xmlPath( getAssetPath( strImageName ));
 		return loadImage( xmlPath );
 	}
 	catch( ... )
 	{
-		console() << "Unable to load the image: " << pathImage << std::endl;
+		console() << "Unable to load the image: " << strImageName << std::endl;
 	}
 
 	return ImageSourceRef();
 }
 
-void AreaController::setRect( std::string name, Rectf &rect )
+void AreaController::setRect( std::string areaName, Rectf &rect )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		pArea->setRect( rect );
 }
 
-void AreaController::setDrawFrame( std::string name, bool drawFrame )
+void AreaController::setDrawFrame( std::string areaName, bool drawFrame )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		pArea->setDrawFrame( drawFrame );
 }
 
-bool AreaController::getDrawFrame( std::string name )
+bool AreaController::getDrawFrame( std::string areaName )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		return pArea->getDrawFrame();
@@ -198,17 +198,17 @@ bool AreaController::getDrawFrame( std::string name )
 	return false;
 }
 
-void AreaController::setFadeIn( std::string name, float fadeIn )
+void AreaController::setFadeIn( std::string areaName, float fadeIn )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		pArea->setFadeIn( fadeIn );
 }
 
-float AreaController::getFadeIn( std::string name )
+float AreaController::getFadeIn( std::string areaName )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		return pArea->getFadeIn();
@@ -216,22 +216,40 @@ float AreaController::getFadeIn( std::string name )
 	return 0;
 }
 
-void AreaController::setFadeOut( std::string name, float fadeOut )
+void AreaController::setFadeOut( std::string areaName, float fadeOut )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		pArea->setFadeOut( fadeOut );
 }
 
-float AreaController::getFadeOut( std::string name )
+float AreaController::getFadeOut( std::string areaName )
 {
-	Area *pArea = _getArea( name );
+	Area *pArea = _getArea( areaName );
 
 	if( pArea )
 		return pArea->getFadeOut();
 
 	return 0;
+}
+
+void AreaController::setUseAlphaShader( std::string areaName, bool useAlphaShader )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+		pArea->setUseAlphaShader( useAlphaShader );
+}
+
+bool AreaController::getUseAlphaShader( std::string areaName )
+{
+	Area *pArea = _getArea( areaName );
+
+	if( pArea )
+		return pArea->getUseAlphaShader();
+
+	return false;
 }
 
 void AreaController::resize()
@@ -278,11 +296,11 @@ void AreaController::setTouchPosEnd()
 	}
 }
 
-Area *AreaController::_getArea( std::string name )
+Area *AreaController::_getArea( std::string areaName )
 {
 	for( std::vector<Area*>::iterator p = mAreas.begin(); p != mAreas.end(); ++p )
 	{
-		if((*p)->getName() == name )
+		if((*p)->getName() == areaName )
 		{
 			return *p;
 		}

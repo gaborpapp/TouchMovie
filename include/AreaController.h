@@ -19,20 +19,23 @@ public:
 	void mouseDown( ci::app::MouseEvent event );
 	void mouseUp  ( ci::app::MouseEvent event );
 
-	void addArea( std::string name, ci::Rectf &rect );
-	void removeArea( std::string name );
-	void setMovieIdle( std::string name, ci::fs::path pathMovie );
-	void setMovieActive( std::string name, ci::fs::path pathMovie );
-	void setRect( std::string name, ci::Rectf &rect );
+	void addArea( std::string areaName, ci::Rectf &rect );
+	void removeArea( std::string areaName );
+	void setMovieIdle( std::string areaName, std::string movieName );
+	void setMovieActive( std::string areaName, std::string movieName );
+	void setRect( std::string areaName, ci::Rectf &rect );
 
-	void setDrawFrame( std::string name, bool drawFrame );
-	bool getDrawFrame( std::string name );
+	void setDrawFrame( std::string areaName, bool drawFrame );
+	bool getDrawFrame( std::string areaName );
 
-	void setFadeIn( std::string name, float fadeIn );
-	float getFadeIn( std::string name );
+	void  setFadeIn( std::string areaName, float fadeIn );
+	float getFadeIn( std::string areaName );
 
-	void setFadeOut( std::string name, float fadeOut );
-	float getFadeOut( std::string name );
+	void  setFadeOut( std::string areaName, float fadeOut );
+	float getFadeOut( std::string areaName );
+
+	void  setUseAlphaShader( std::string areaName, bool useAlphaShader );
+	bool  getUseAlphaShader( std::string areaName );
 
 	void resize();
 
@@ -41,11 +44,11 @@ public:
 	void setTouchPosEnd();
 
 	void        setBackground( int width, int height );
-	void        setBackgroundImage( ci::fs::path pathImage );
-	void        setBackgroundMovie( ci::fs::path pathMovie );
+	void        setBackgroundImage( std::string strImageName );
+	void        setBackgroundMovie( std::string strMovieName );
 	Background *getBackground();
 private:
-	Area  *_getArea( std::string name );
+	Area  *_getArea( std::string areaName );
 	Area  *_getArea( const ci::Vec2i &pos );
 	void   _actionArea( const ci::Vec2i &pos, ActionFunc pActionFunc );
 	bool   _isAreaAct ( Area *pArea );
@@ -53,8 +56,8 @@ private:
 	static void _setTouchPosAction( Area *pArea, void *pvData );
 	static void _setMousePosAction( Area *pArea, void *pvData );
 
-	ci::qtime::MovieGl _loadMovie( ci::fs::path pathMovie );
-	ci::ImageSourceRef _loadImage( ci::fs::path pathImage );
+	ci::ImageSourceRef _loadImage( std::string strImageName );
+	ci::qtime::MovieGl _loadMovie( std::string strMovieName );
 
 private:
 	Background         *mpBackground;

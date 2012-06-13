@@ -45,6 +45,10 @@ public:
 
 	void              setFadeOut( const float fadeOut );
 	const float       getFadeOut() const;
+
+	bool              getUseAlphaShader();
+	void              setUseAlphaShader( bool useAlphaShader );
+
 private:
 	void              _changeAlpha();
 
@@ -61,6 +65,8 @@ private:
 
 	float            mFadeIn;
 	float            mFadeOut;
+
+	bool             mUseAlphaShader;
 };
 
 } // namespace TouchMovie

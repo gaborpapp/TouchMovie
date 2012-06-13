@@ -10,22 +10,36 @@ Background::Background( Rectf &rect )
 , mpMovie(  0 )
 , mRect( rect )
 , mRectOrig( rect )
+, mUseAlphaShader( false )
 {
 }
 
-void Background::setImage( ci::ImageSourceRef &imageSource )
+void Background::setImage( std::string strImageName, ci::ImageSourceRef &imageSource )
 {
-	mPicture = gl::Texture( imageSource );
+	mImageName = strImageName;
+	mPicture   = gl::Texture( imageSource );
 }
 
-void Background::setMovie( ci::qtime::MovieGl &movie )
+void Background::setMovie( std::string strMovieName, ci::qtime::MovieGl &movie )
 {
 	if( mpMovie )
 		delete mpMovie;
 
-	mpMovie = new Movie( movie, mRect );
+	mMovieName = strMovieName;
+	mpMovie    = new Movie( movie, mRect );
+	mpMovie->setUseAlphaShader( mUseAlphaShader );
 	mpMovie->setAlpha( 1.0f );
 	mpMovie->play( true );
+}
+
+std::string Background::getImageName()
+{
+	return mImageName;
+}
+
+std::string Background::getMovieName()
+{
+	return mMovieName;
 }
 
 Background::~Background()
@@ -65,6 +79,19 @@ const Rectf Background::getRect() const
 const Rectf Background::getRectOrig() const
 {
 	return mRectOrig;
+}
+
+bool Background::getUseAlphaShader()
+{
+	return mUseAlphaShader;
+}
+
+void Background::setUseAlphaShader( bool useAlphaShader )
+{
+	mUseAlphaShader = useAlphaShader;
+
+	if( mpMovie )
+		mpMovie->setUseAlphaShader( useAlphaShader );
 }
 
 } // namespace TouchMovie

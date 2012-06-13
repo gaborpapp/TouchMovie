@@ -9,26 +9,23 @@ using namespace ci;
 namespace TouchMovie
 {
 
-#if USE_SHADER == 1
 ci::gl::GlslProg Movie::sShader;
-#endif
 
 Movie::Movie( qtime::MovieGl &movie, Rectf &rect )
 : mMovie( movie )
 , mRect( rect )
 , mFrame()
 , mAlpha( 0.0f )
+, mUseAlphaShader( false )
 {
 	mMovie.seekToStart();
 	mMovie.setLoop();
 	mMovie.stop();
-#if USE_SHADER == 1
 	if ( !sShader )
 	{
 		sShader = gl::GlslProg( app::loadResource( RES_MOVIE_VERT ),
 				app::loadResource( RES_MOVIE_FRAG ) );
 	}
-#endif
 }
 
 void Movie::update()
@@ -56,16 +53,19 @@ void Movie::draw()
 			rect = Rectf( mFrame.getBounds());
 		}
 
-#if USE_SHADER == 1
-		sShader.bind();
-		sShader.uniform( "tex", 0 );
-		sShader.uniform( "size", static_cast< Vec2f >( mFrame.getSize() ) );
-#endif
+		if( mUseAlphaShader )
+		{
+			sShader.bind();
+			sShader.uniform( "tex", 0 );
+			sShader.uniform( "size", static_cast< Vec2f >( mFrame.getSize() ) );
+		}
 		gl::color( ColorA( 1.0f, 1.0f, 1.0f, mAlpha )); // red, green, blue, alpha
 		gl::draw( mFrame, mRect );
-#if USE_SHADER == 1
-		sShader.unbind();
-#endif
+
+		if( mUseAlphaShader )
+		{
+			sShader.unbind();
+		}
 	}
 
 	gl::disableAlphaBlending();
@@ -117,6 +117,16 @@ void Movie::setRect( const Rectf &rect )
 const Rectf Movie::getRect() const
 {
 	return mRect;
+}
+
+bool Movie::getUseAlphaShader()
+{
+	return mUseAlphaShader;
+}
+
+void Movie::setUseAlphaShader( bool useAlphaShader )
+{
+	mUseAlphaShader = useAlphaShader;
 }
 
 } // namespace TouchMovie
