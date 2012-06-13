@@ -37,6 +37,7 @@ private:
 	params::PInterfaceGl mParams;
 	float                mFPS;
 	bool                 mShowParams;
+	bool                 mFullScreen;
 
 #if USE_KINECT == 1
 	KinectUser          mKinectUser;
@@ -68,15 +69,21 @@ void TouchMovieApp::setup()
 	}
 	params::PInterfaceGl::load( paramsXml );
 
+	mFullScreen = false;
+	mShowParams = false;
+
 	mParams = params::PInterfaceGl( "TouchMovie", Vec2i( 150, 80 ) );
 	mParams.addPersistentSizeAndPosition();
 	mParams.addText( "Touch Movie" );
 	mParams.addParam( "FPS" , &mFPS, "", true );
+	mParams.addPersistentParam( "FullScreen", &mFullScreen, false );
 
 	TwDefine( "TW_HELP visible=false" );
 	TwDefine( "TouchMovie iconified=true" );
 
-	mShowParams = true;
+	if( mFullScreen )
+		hideCursor();
+	showParams( mShowParams );
 
 #if USE_KINECT == 1
 	try
@@ -183,15 +190,16 @@ void TouchMovieApp::keyDown( KeyEvent event )
 	}
 	else if( event.getCode() == 'f' )
 	{
-		setFullScreen( ! isFullScreen());
-		if( ! isFullScreen())
+		mFullScreen = ! mFullScreen;
+		setFullScreen( mFullScreen );
+		if( ! mFullScreen )
 			showCursor();
 	}
 	else if( event.getCode() == 's' )
 	{
 		mShowParams = ! mShowParams;
 		showParams( mShowParams );
-		if( isFullScreen())
+		if( mFullScreen )
 		{
 			if( mShowParams )
 				showCursor( );
@@ -230,6 +238,11 @@ void TouchMovieApp::update()
 #if USE_KINECT == 1
 	mKinectUser.update();
 #endif /* USE_KINECT */
+
+	if( mFullScreen != isFullScreen())
+	{
+		setFullScreen( mFullScreen );
+	}
 }
 
 void TouchMovieApp::draw()
