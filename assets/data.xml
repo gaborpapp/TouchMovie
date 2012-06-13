@@ -8,43 +8,34 @@
   DrawFrame = "0">
 </Settings>
 <Background
-  PathImage = "back.jpg"
-  Width     = "1500"
-  Height    = "750">
+  PathMovie = "_GB.mov"
+  Width     = "1920"
+  Height    = "640">
 </Background>
 <TouchMovie>
   <Movie
-    Name       = "meditation"
-    PathIdle   = "meditation_idle.mov"
-    PathActive = "meditation_active.mov"
-    FadeIn     = "3"
-    FadeOut    = "3"
-    x          = "50"
-    y          = "50"
-    width      = "650"
-    height     = "650">
+    Name        = "meditation"
+    PathIdle    = "meditation_idle.mov"
+    PathActive  = "meditation_active.mov"
+    FadeIn      = "3"
+    FadeOut     = "3"
+    x           = "329.3"
+    y           = "190.8"
+    width       = "200"
+    height      = "200"
+    AlphaShader = "0" >
   </Movie>
   <Movie
-    Name       = "meditation 2"
-    PathIdle   = "meditation_idle.mov"
-    PathActive = "meditation_active.mov"
-    FadeIn     = "3"
-    FadeOut    = "3"
-    x          = "1000"
-    y          = "50"
-    width      = "250"
-    height     = "250">
-  </Movie>
-  <Movie
-    Name       = "meditation 3"
-    PathIdle   = "meditation_idle.mov"
-    PathActive = "meditation_active.mov"
-    FadeIn     = "3"
-    FadeOut    = "3"
-    x          = "1000"
-    y          = "400"
-    width      = "250"
-    height     = "250">
+    Name        = "repul"
+    PathIdle    = "repul_idle.mov"
+    PathActive  = "repul_active.mov"
+    FadeIn      = "3"
+    FadeOut     = "3"
+    x           = "1104"
+    y           = "38"
+    width       = "200"
+    height      = "500"
+    AlphaShader = "0" >
   </Movie>
 </TouchMovie>
 
