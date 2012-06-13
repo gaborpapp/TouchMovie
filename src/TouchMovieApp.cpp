@@ -1,6 +1,7 @@
 #include "cinder/app/AppBasic.h"
 #include "cinder/Xml.h"
 #include "PParams.h"
+#include "AntTweakBar.h"
 
 #include "AreaController.h"
 #include "Area.h"
@@ -32,6 +33,9 @@ private:
 	int                 mHeight;
 	bool                mDrawFrame;
 
+	params::PInterfaceGl mParams;
+	float                mFPS;
+
 #if USE_KINECT == 1
 	KinectUser          mKinectUser;
 #endif /* USE_KINECT */
@@ -61,6 +65,14 @@ void TouchMovieApp::setup()
 		paramsXml = assetPath / "params.xml" ;
 	}
 	params::PInterfaceGl::load( paramsXml );
+
+	mParams = params::PInterfaceGl( "TouchMovie", Vec2i( 150, 80 ) );
+	mParams.addPersistentSizeAndPosition();
+	mParams.addText( "Touch Movie" );
+	mParams.addParam( "FPS" , &mFPS, "", true );
+
+	TwDefine( "TouchMovie iconified=true" );
+	TwDefine( "TW_HELP visible=false" );
 
 #if USE_KINECT == 1
 	try
@@ -194,6 +206,7 @@ void TouchMovieApp::resize( ResizeEvent event )
 
 void TouchMovieApp::update()
 {
+	mFPS = getAverageFps();
 	mAreaController.update();
 
 #if USE_KINECT == 1
